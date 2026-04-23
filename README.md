@@ -1,0 +1,2 @@
+# MiniZinc
+MiniZinc Artefacts
