@@ -1,6 +1,10 @@
 # Castle Puzzle
 
 Solution to a wooden puzzle I picked up at a merket. which is at heart a tile fitting puzzle. The pieces cover the base with one spare cell, which is nominated as forbidden.
+
+The output is a Scalar Vector Graphics (SVG) document that can be pasted into a SVG viewer, such as [https://www.svgviewer.dev](https://www.svgviewer.dev).
+
+The output produced is:
 ```
 <svg width="70" height="70"><g transform="scale(10)">
 <rect style="fill:red" width="2" height="3" x="0" y="4"/><rect style="fill:red" width="1" height="1" x="2" y="5"/>
@@ -16,6 +20,7 @@ Solution to a wooden puzzle I picked up at a merket. which is at heart a tile fi
 </g></svg>
 ```
 which displays as
+
 ![solution](img/castle-puzzle.png)
 
 Note: the origin of the model co-ordinates is bottom-left. The origin of SVG co-ordinates is top-left. The displayed solution is reflection of the actual solution on the horizontal axis.

@@ -1,3 +1,7 @@
+/*
+  Parameters
+*/
+
 % A TMI runs over a period of a few hours so 24 hours is adequate for modelling.
 % A time is represented as the number of minutes since midnight.
 int:  maxtime = 24 * 60;
@@ -103,10 +107,9 @@ function var int: overlap(var FLIGHT: f) =
 
 % The cost of a TMI is the sum of:
 % - for each flight allocated a slot, the difference between its preferred time and allocated time;
-% - for a flight not allocated a slot, the duration of its takeoff window.
-var int: cost = sum(f in allocated)(abs(flights[f].preferred - slot[f])) +
-               sum(f in excluded)(flights[f].latest - flights[f].earliest);
-%                 sum(f in excluded)(overlap(f));
+% - for a flight not allocated a slot, the overlap between the flight's takeoff window and the TMI period.
+var int: cost;
+constraint cost = sum(f in allocated)(abs(flights[f].preferred - slot[f])) + sum(f in excluded)(overlap(f));
 
 % The goal is to minimize the cost of the TMI.
 solve minimize cost;

@@ -7,7 +7,7 @@ Track pieces are placed on a grid to form a continuous path from the entry point
 - some initial track pieces are fixed;
 - the number of pieces that can appear in each row and column of the grid is fixed.
 
-The output is a Scalar Vector Graphics (SVG) documet that can be pasted into a SVG viewer, such as [https://www.svgviewer.dev](https://www.svgviewer.dev).
+The output is a Scalar Vector Graphics (SVG) document that can be pasted into a SVG viewer, such as [https://www.svgviewer.dev](https://www.svgviewer.dev).
 
 For data file [train-tracks-11-12](train-tracks-11-12.dzn) the output is:
 ```

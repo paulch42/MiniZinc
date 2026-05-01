@@ -55,7 +55,6 @@ instance["num_runways"] = len(runways)
 instance["config"] = config
 instance["flights"] = flights
 result = instance.solve()
-print(result)
 
 # output the results
 print(f'TMI Schedule for {airport} on {dt}')
@@ -73,3 +72,4 @@ for i in range(len(slot)):
             found = True
             print("Excluded:", end="")
         print(f' {fids[i]}')
+print(f'Cost: {result['cost']}')
