@@ -1,0 +1,14 @@
+{
+    "airport": "YSSY",
+    "date": "2000-01-01",
+    "start": "00:00",
+    "end": "01:00",
+    "rate": [
+        10,
+        null,
+        null,
+        null,
+        7,
+        null
+    ]
+}

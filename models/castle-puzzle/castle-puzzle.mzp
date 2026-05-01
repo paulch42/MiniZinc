@@ -1,0 +1,14 @@
+{
+    "openFiles": [
+        "puzzle.mzn",
+        "puzzle.dzn"
+    ],
+    "openTab": 1,
+    "projectFiles": [
+        "puzzle.dzn",
+        "puzzle.mzn"
+    ],
+    "selectedBuiltinConfigId": "org.chuffed.chuffed",
+    "selectedBuiltinConfigVersion": "0.13.2",
+    "version": 106
+}

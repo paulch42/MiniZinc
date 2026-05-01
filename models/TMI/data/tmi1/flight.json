@@ -1,0 +1,28 @@
+{
+    "QFA1": {
+        "preferred": "00:25",
+        "earliest": "00:20",
+        "latest": "00:30",
+        "rwy": [
+            "34L",
+            "25"
+        ]
+    },
+    "VOZ42": {
+        "preferred": "00:35",
+        "earliest": "00:30",
+        "latest": "00:36",
+        "rwy": [
+            "34R",
+            "25"
+        ]
+    },
+    "JST666": {
+        "preferred": "00:35",
+        "earliest": "00:34",
+        "latest": "00:37",
+        "rwy": [
+            "25"
+        ]
+    }
+}

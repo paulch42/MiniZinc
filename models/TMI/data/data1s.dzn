@@ -1,0 +1,5 @@
+flights = [(id:"QFA1", preferred:25, earliest:20, latest:30, rwy:{R34L,R25}),
+           (id:"VOZ42", preferred:35, earliest:30,latest:36, rwy:{R34R,R25}),
+           (id:"JST666", preferred:35, earliest:34, latest:37, rwy:{R25})];
+runway = {R34L,R34R,R16L,R16R,R25,R07};
+config = (id:"YSSY260123", start:0, end:60, rate:[10,<>,<>,<>,7,<>]);

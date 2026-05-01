@@ -1,0 +1,5 @@
+flights = [(preferred:25, earliest:20, latest:30, rwy:{1,5}),
+           (preferred:35, earliest:30,latest:36, rwy:{2,5}),
+           (preferred:35, earliest:34, latest:37, rwy:{5})];
+num_runways = 6;
+config = (start:0, end:60, rate:[10,<>,<>,<>,7,<>]);

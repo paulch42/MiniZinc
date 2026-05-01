@@ -1,0 +1,26 @@
+{
+    "openFiles": [
+        "train_track.mzn",
+        "train_track2.mzn",
+        "train_track_1.dzn",
+        "train_track_31.dzn",
+        "train_track_161.dzn",
+        "trains_track_11_12.dzn",
+        "train_track_8_9.dzn",
+        "train_track_140.dzn"
+    ],
+    "openTab": 0,
+    "projectFiles": [
+        "train_track.mzn",
+        "train_track2.mzn",
+        "train_track_1.dzn",
+        "train_track_140.dzn",
+        "train_track_161.dzn",
+        "train_track_31.dzn",
+        "train_track_8_9.dzn",
+        "trains_track_11_12.dzn"
+    ],
+    "selectedBuiltinConfigId": "org.chuffed.chuffed",
+    "selectedBuiltinConfigVersion": "0.13.2",
+    "version": 106
+}

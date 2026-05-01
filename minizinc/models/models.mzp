@@ -1,0 +1,30 @@
+{
+    "openFiles": [
+        "TMI.mzn",
+        "train_track.mzn",
+        "puzzle.mzn",
+        "yumi-dynamic.mzn",
+        "roster_model.mzn",
+        "blocks.mzn",
+        "handball.mzn",
+        "ihtc.mzn",
+        "group.mzn",
+        "word_equations.mzn"
+    ],
+    "openTab": 9,
+    "projectFiles": [
+        "TMI.mzn",
+        "blocks.mzn",
+        "group.mzn",
+        "handball.mzn",
+        "ihtc.mzn",
+        "puzzle.mzn",
+        "roster_model.mzn",
+        "train_track.mzn",
+        "word_equations.mzn",
+        "yumi-dynamic.mzn"
+    ],
+    "selectedBuiltinConfigId": "org.gecode.gecode",
+    "selectedBuiltinConfigVersion": "6.3.0",
+    "version": 106
+}

@@ -1,0 +1,10 @@
+flights = [(id:"QFA1", preferred:420,earliest:415,latest:425, rwy:{R34L,R34R,R16L,R16R}),
+           (id:"QFA123", preferred:422,earliest:420,latest:425, rwy:{R34L,R34R,R16L,R16R}),
+           (id:"VOZ42", preferred:430,earliest:420,latest:440, rwy:{R34L,R34R,R25}),
+           (id:"VOZ111", preferred:425,earliest:424,latest:430, rwy:{R34L,R34R,R16L,R16R},),
+           (id:"JST666", preferred:440,earliest:430,latest:445, rwy:{R34L,R34R}),
+           (id:"RXA1", preferred:426,earliest:424,latest:428, rwy:{R34R,R25,R07}),
+           (id:"JST12", preferred:435,earliest:430,latest:440, rwy:{R34L,R25,R07})
+          ];
+config = (id:"YSSY000101", start:420, end:440, rate:[8,4,<>,<>,<>,<>]);
+runway = {R34L,R34R,R16L,R16R,R25,R07};
