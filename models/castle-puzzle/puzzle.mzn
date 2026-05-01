@@ -1,7 +1,8 @@
 % Run with Chuffed solver for best performance
 include "globals.mzn";
-
-int: n; % number of blocks
+  
+% number of blocks, with extension to model forbidden cell
+int: n;
 set of int: BLOCK = 1..n;
 set of int: BLOCKX = 1..n+1;
 

@@ -1,4 +1,9 @@
+% Run with Chuffed solver for best performance
 include "globals.mzn";
+
+/*
+  Parameters
+*/
 
 % the size of the puzzle
 int: rows;
