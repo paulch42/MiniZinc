@@ -14,12 +14,16 @@ def decode_time(t):
     return f'{(t // 60):02d}:{(t % 60):02d}'
 
 
-def encode_flt(flt):
+def encode_flt(id,flt):
     # encode a flight in a form required by the model
-    flt['preferred'] = encode_time(time.fromisoformat(flt['preferred']))
-    flt['earliest'] = encode_time(time.fromisoformat(flt['earliest']))
-    flt['latest'] = encode_time(time.fromisoformat(flt['latest']))
-    flt['rwy'] = {runways.index(r)+1 for r in flt['rwy']}
+    try:
+        flt['preferred'] = encode_time(time.fromisoformat(flt['preferred']))
+        flt['earliest'] = encode_time(time.fromisoformat(flt['earliest']))
+        flt['latest'] = encode_time(time.fromisoformat(flt['latest']))
+        flt['rwy'] = {runways.index(r)+1 for r in flt['rwy']}
+    except Exception as e:
+        print(f'Invalid data for "{id}"')
+        raise e
     return flt
 
 
@@ -45,16 +49,19 @@ runways = airports[airport]['runway']
 with open(f'{root}/flight.json', 'r') as file:
     flight = json.load(file)
 fids = list(flight.keys())
-flights = [encode_flt(f) for f in list(flight.values())]
+flights = [encode_flt(key,value) for key,value in flight.items()]
 
 # initialise the input data and run the solver
 model = Model('./tmi.mzn')
-solver = Solver.lookup('gecode')
+solver = Solver.lookup('chuffed')
 instance = Instance(solver, model)
 instance["num_runways"] = len(runways)
 instance["config"] = config
 instance["flights"] = flights
 result = instance.solve()
+if not result:
+    print('No departure schedule satisfies the constraints')
+    exit(0)
 
 # output the results
 print(f'TMI Schedule for {airport} on {dt}')
@@ -70,6 +77,6 @@ for i in range(len(slot)):
     if slot[i] is None:
         if not found:
             found = True
-            print("Excluded:", end="")
-        print(f' {fids[i]}')
+            print("Excluded:")
+        print(f'  {fids[i]}')
 print(f'Cost: {result['cost']}')

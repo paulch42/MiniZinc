@@ -40,4 +40,18 @@ python3 tmi.py <n>
 ```
 where \<n> is a digit corresponding to one of the folders in [data](data) (e.g. _1_ for _tmi1_).
 
+Example output from dataset 2:
+```
+TMI Schedule for YSSY on 1999-12-31
+Commences: 07:00, Ends: 07:20
+  QFA1    : 07:00 - 34R
+  QFA123  : 07:02 - 34L
+  VOZ111  : 07:05 - 34R
+  VOZ42   : 07:10 - 34R
+  JST12   : 07:15 - 34L
+  JST666  : 07:20 - 34R
+Excluded:
+  RXA1
+Cost: 4
+```
 Also in [data](data), _data1.dzn_ and _data2.dzn_ are direct input for _tmi.mzn_, and _data1s.dzn_ and _data2s.dzn_ are input for _tmi_standalone.mzn_.

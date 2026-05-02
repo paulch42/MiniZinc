@@ -1,11 +1,17 @@
+% Run with Chuffed solver for best performance.
+% The model gets very expensive very quickly as the data size grows.
+
 /*
   Parameters
 */
 
-% A TMI runs over a period of a few hours so 24 hours is adequate for modelling.
+% A TMI runs over a period of no more than a few hours on one day, so 24 hours is adequate for modelling.
 % A time is represented as the number of minutes since midnight.
 int:  maxtime = 24 * 60;
 set of int: TIME = 0..maxtime-1;
+
+% Subset of times over which the TMI runs; slot times must be in this range.
+set of int: TMI_TIME = config.start..config.end;
 
 % The maximum time (in minutes) the TMI enforces between two consecutive takeoffs.
 int: max_separation = 15;
@@ -53,7 +59,8 @@ constraint forall(f in FLIGHT)(assert(flights[f].rwy intersect available != {},
                                       "Flight \(f) cannot use any of the available runways (\(available))"));
 
 % The preferred takeoff time for a flight must be in its takeoff window.
-constraint forall(f in FLIGHT)(assert(flights[f].earliest <= flights[f].preferred /\ flights[f].preferred <= flights[f].latest,
+% constraint forall(f in FLIGHT)(assert(flights[f].earliest <= flights[f].preferred /\ flights[f].preferred <= flights[f].latest,
+constraint forall(f in FLIGHT)(assert(flights[f].preferred in flights[f].earliest..flights[f].latest,
                                       "Flight \(f): preferred time (\(flights[f].preferred)) in not in " ++
                                       "takeoff window (\(flights[f].earliest)..\(flights[f].latest))"));
 
@@ -67,7 +74,7 @@ constraint forall(f in FLIGHT)(assert(flights[f].earliest <= config.end /\ confi
 */
 
 % The slot (target takeoff time) allocated to each flight. If <>, indicates flight was not allocated a slot.
-array[FLIGHT] of var opt TIME: slot;
+array[FLIGHT] of var opt TMI_TIME: slot;
 
 % The runway allocated to each flight. If <>, indicates flight was not allocated a slot.
 array[FLIGHT] of var opt available: rwy;
@@ -86,10 +93,10 @@ var set of FLIGHT: excluded = FLIGHT diff allocated;
 constraint forall(f in allocated)(rwy[f] in flights[f].rwy);
 
 % The time allocated to a flight must fall within its takeoff window.
-constraint forall(f in allocated)(flights[f].earliest <= slot[f] /\ slot[f] <= flights[f].latest);
+constraint forall(f in allocated)(slot[f] in flights[f].earliest..flights[f].latest);
 
 % The time allocated to a flight must fall within the TMI period.
-constraint forall(f in allocated)(config.start <= slot[f] /\ slot[f] <= config.end);
+% Explicit constraint not required; handled by restricting codomain of 'slot' to TMI_TIME.
 
 % Two flights allocated the same runway must depart at least the 'rate' duration apart.
 constraint forall(f, g in allocated where f < g /\ rwy[f] = rwy[g])(abs(slot[f]-slot[g]) >= config.rate[rwy[f]]);

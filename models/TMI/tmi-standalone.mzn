@@ -1,5 +1,5 @@
-% Number of minutes in a day.
-int:  maxtime = 24 * 60;
+% 12 hours is far more than a TMI would ever run.
+int:  maxtime = 12 * 60;
 
 % A time is represented as the number of minutes since midnight.
 set of int: TIME = 0..maxtime-1;

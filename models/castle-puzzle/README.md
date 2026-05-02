@@ -23,4 +23,4 @@ which displays as
 
 ![solution](img/castle-puzzle.png)
 
-Note: the origin of the model co-ordinates is bottom-left. The origin of SVG co-ordinates is top-left. The displayed solution is reflection of the actual solution on the horizontal axis.
+Note: the origin of the model co-ordinates is bottom-left. The origin of SVG co-ordinates is top-left. The displayed solution is a reflection of the actual solution in the horizontal axis.
