@@ -32,7 +32,7 @@ There are two variants of the model:
 - [tmi-standalone](tmi-standalone.mzn) has more expressive input data, incorporating strings and enums, that is easier to interpret. It also provides meaningful output.
 - [tmi](tmi.mzn) is a bare bone model in that everything is represented as integers, and decision variables are output in default MiniZinc format.
 
-The latter model was designed to be invoked from the Python script [tmi.py](tmi.py) using the [minizinc](https://pypi.org/project/minizinc/) package. The input to the Python script is a set of three JSON files, and the output is pretty-printed by Python.
+The latter model was designed to be invoked from the Python script [tmi.py](tmi.py) using the [MiniZinc Python](https://pypi.org/project/minizinc/) package. The input to the Python script is a set of three JSON files, and the output is pretty-printed by Python.
 
 To run the script:
 ```
