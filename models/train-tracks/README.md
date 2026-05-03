@@ -1,6 +1,6 @@
 # Train Tracks Puzzle
 
-This folder contains a solution to the common [train tracks puzzle](https://puzzlemadness.co.uk/traintracks/medium).
+This folder contains a solution to the popular [train tracks puzzle](https://puzzlemadness.co.uk/traintracks/medium).
 
 Track pieces are placed on a grid to form a continuous path from the entry point to the exit point. Each track piece is vertical, horizontal, or one of the four rotations of a corner piece. Constraints:
 
