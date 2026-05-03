@@ -109,4 +109,4 @@ var int: cost = sum(f in allocated)(abs(flights[f].preferred - slot[f])) +
 %                 sum(f in excluded)(overlap(f));
 
 % The goal is to minimize the cost of the TMI.
-solve minimize cost;
+solve minimize cost

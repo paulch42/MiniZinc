@@ -32,7 +32,6 @@ The following are known issues with respect to compliance with the official Mini
 - A double quote `"` cannot appear in a string literal, even if escaped by `\`.
 - Comments can be ignored or recorded in the parse tree. If ignored, comments can appear anywhere per the MiniZinc specification. If comments are recorded in the parse tree they can only appear between top-level model items.
 - If inline comments are ignored (the default), the comment delimiter `%` cannot appear as the first non-white space character in a string literal.
-- The last item in a model must be terminated with a `;`. MiniZinc allows `;` to be omitted from the last item.
 
 ## Performance
 

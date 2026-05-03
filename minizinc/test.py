@@ -1140,6 +1140,9 @@ def test_minizinc_model():
         '/* comment 1 */include "file.dzn";/* comment 2*/var int: a = 4;/* comment 3*/', parse_all=True)
     assert minizinc_model.parse_string(
         '% inline 1\ninclude "file.dzn"; % inline 2\nvar int: a = 4; % inline 3', parse_all=True)
+    assert minizinc_model.parse_string(
+        '% inline 1\ninclude "file.dzn"; % inline 2\nvar int: a = 4 % inline 3', parse_all=True)
+    assert minizinc_model.parse_string('include "file.dzn"', parse_all=True)
     with pytest.raises(ParseException):
         assert minizinc_model.parse_string(
             'function bool: /* embedded */ iseven(int:i)= "-%cd" /* again */ div 2 = 0;', parse_all=True)

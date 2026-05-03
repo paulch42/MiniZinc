@@ -257,7 +257,7 @@ comment_item = inline_comment | block_comment
 
 model_item = include_item | var_decl_item | enum_item | type_synonym_item | assign_item | constraint_item | solve_item | output_item | predicate_item | tst_item | function_item | annotation_item | comment_item
 
-minizinc_model = (comment_item | model_item + skip(';'))[...]
+minizinc_model = (comment_item | model_item + skip(';'))[...] + opt(model_item + comment_item[...])
 
 def mz_parse(ignore_inline=True,ignore_block=True):
     if ignore_inline:
