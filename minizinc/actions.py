@@ -114,12 +114,9 @@ def float_literal_action(tokens):
         return FloatLiteral(float.fromhex(tokens[0]))
 
 
-def raw_string_action(tokens):
-    return mixed_string.parse_string(tokens[0])
-
-
 def string_literal_action(tokens):
-    return StringLiteral(tokens[0::2], tokens[1::2])
+    ms = mixed_string.parse_string(tokens[0])
+    return StringLiteral([s.replace('"','\\"') for s in ms[0::2]], [e for e in ms[1::2]])
 
 
 def quoted_op_action(tokens):
@@ -438,7 +435,6 @@ absent_literal.set_parse_action(absent_literal_action)
 bool_literal.set_parse_action(bool_literal_action)
 int_literal.set_parse_action(int_literal_action)
 float_literal.set_parse_action(float_literal_action)
-raw_string.set_parse_action(raw_string_action)
 string_literal.set_parse_action(string_literal_action)
 expr_seq.set_parse_action(expr_seq_action)
 quoted_op.set_parse_action(quoted_op_action)

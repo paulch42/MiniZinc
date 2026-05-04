@@ -1,4 +1,9 @@
+% Run with Chuffed solver for best performance
 include "globals.mzn";
+
+/*
+  Parameters
+*/
 
 % the size of the puzzle
 int: rows;
@@ -103,6 +108,6 @@ solve :: int_search(pathrc,input_order,indomain_max) satisfy;
 
 % The remainder concerns output of a solution (in SVG)
 int: scale = 10;
-output "<svg width='\((cols+1)*scale)' height='\((rows+1)*scale)'>\n";
-output ["<polyline style='fill:none;stroke:red' points='"] ++ [ "\(pathc[p]*scale),\(pathr[p]*scale) " | p in PATH] ++ ["'/>"];
+output "<svg width=\"\((cols+1)*scale)\" height=\"\((rows+1)*scale)\">\n";
+output ["<polyline style=\"fill:none;stroke:red\" points=\""] ++ [ "\(pathc[p]*scale),\(pathr[p]*scale) " | p in PATH] ++ ["\"/>"];
 output "</svg>\n";

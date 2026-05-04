@@ -312,17 +312,15 @@ def test_string_literal():
     assert x.exprs[1] == Ident('three')
     assert string_literal.parse_string(r'"   "', parse_all=True)[
         0].strs[0] == '   '
+    assert string_literal.parse_string(r'"one embedded \" quote"', parse_all=True)
+    assert string_literal.parse_string(r'"nested \"quote\""', parse_all=True)
+    assert string_literal.parse_string(r'"coord=(\"\(sin(x))\",\"\(cos(y))\")"', parse_all=True)
     assert string_literal.parse_string('"x % abcd"', parse_all=True)
     assert string_literal.parse_string('"% abcd"', parse_all=True)
     with pytest.raises(ParseException):
-        assert string_literal.parse_string(r'"Contains " "', parse_all=True)
-    with pytest.raises(ParseException):
-        assert string_literal.parse_string(
-            '"embedded \" in string"', parse_all=True)
+        assert string_literal.parse_string(r'"Unescaped " "', parse_all=True)
     with pytest.raises(ParseException):
         assert string_literal.parse_string(r"'wrong quotes'", parse_all=True)
-    # with pytest.raises(ParseException):
-    #     assert string_literal.parse_string('"  % abcd"', parse_all=True)
 
 
 def test_unary_op():

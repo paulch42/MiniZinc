@@ -80,17 +80,10 @@ int_literal = pp.Regex(
 
 float_literal = pp.Regex(r'[0-9]+\.[0-9]+([eE][-+]?[0-9]+)?') | pp.Regex(r'[0-9]+[eE][-+]?[0-9]+') | pp.Regex(r'0[xX]([0-9a-fA-F]*\.[0-9a-fA-F]+|[0-9a-fA-F]+\.)[pP][-+]?[0-9]+') | pp.Regex('0[xX][0-9a-fA-F]+[pP][-+]?[0-9]+')
 
-raw_string = pp.Regex(
-    r'[ a-zA-Z0-9_\-\.,;:\'=<>/\\?~!$@#%^&+*(){}\[\]]*').leave_whitespace()
-
 mixed_string = (pp.SkipTo(r'\(').leave_whitespace(
 ) + skip(r'\(') + binary_expr + skip(')'))[...] + pp.Regex(r'.*').leave_whitespace()
 
-# Doesn't support embedded " in the string, even if escaped by \.
-string_literal = delimit('"', raw_string, '"')
-
-# This handles embedded " in the string, but it swallows the \ of the \( delimiter.
-# string_literal = pp.QuotedString('"',esc_char='\\',convert_whitespace_escapes=False)
+string_literal = pp.QuotedString('"',esc_quote='\\"',convert_whitespace_escapes=False)
 
 quoted_op = pp.Combine(skip("'") + binary_op + skip("'"))
 
