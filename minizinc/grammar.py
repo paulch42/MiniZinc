@@ -24,9 +24,12 @@ keyword = kw('ann annotation any array bool case constraint diff div else elseif
              'satisfy set solve string subset superset symdiff test then true tuple type union var where xor')
 
 unary_op = exact('+ -') | kw('not')
+# unary_op = exact('+ - ¬') | kw('not')
 
 binary_op = kw('div mod xor in subset superset union diff symdiff intersect default') | exact(
     '<-> <- -> \\/ /\\ ++ <= >= < > == = != ~= ~!= + - * / ^ ~+ ~- ~* ~/ ~div <..< <.. ..< ..')
+# binary_op = kw('div mod xor in subset superset union diff symdiff intersect default') | exact(
+#     '<-> <- -> \\/ /\\ ++ <= >= < > == = != ~= ~!= + - * / ^ ~+ ~- ~* ~/ ~div <..< <.. ..< .. ∪ ∩ ∈ ⊆ ⊇ ≠ ≤ ≥ ∧ ∨ ⊻ ← →')
 
 quoted_ident = pp.Combine(
     "'" + ~(binary_op + exact("'")) + pp.Regex(r'[ a-zA-Z0-9_\-\.,;:=<>/?~!$@#%^&+*(){}\[\]|\\]+') + "'")
@@ -175,22 +178,31 @@ sum_expr = product_expr + (exact('+ - ~+ ~-') + product_expr)[...]
 range_expr = sum_expr + opt(exact('.. <.. ..< <..<') + sum_expr)
 
 intersect_expr = range_expr + (kw('intersect') + range_expr)[...]
-
+# intersect_expr = range_expr + ((kw('intersect') | exact('∩')) + range_expr)[...]
+     
 set_op_expr = intersect_expr + (kw('union diff symdiff') + intersect_expr)[...]
+# set_op_expr = intersect_expr + ((kw('union diff symdiff') | exact('∪')) + intersect_expr)[...]
 
 set_test_expr = set_op_expr + opt(kw('in subset superset') + set_op_expr)
+# set_test_expr = set_op_expr + opt((kw('in subset superset') | exact('∈ ⊆ ⊇')) + set_op_expr)
 
 eq_expr = set_test_expr + opt(exact('== = != ~= ~!=') + set_test_expr)
+# eq_expr = set_test_expr + opt(exact('== = != ~= ~!= ≠') + set_test_expr)
 
 # Exclude '-' after'<' to allow '<-' (production 'iff_expr').
 ineq_expr = eq_expr + \
     opt((exact('<= >= >') | exact('<')+~ exact('-').leave_whitespace()) + eq_expr)
+# ineq_expr = eq_expr + \
+#     opt((exact('<= >= > ≤ ≥') | exact('<')+~ exact('-').leave_whitespace()) + eq_expr)
 
 and_expr = ineq_expr + (exact('/\\') + ineq_expr)[...]
+# and_expr = ineq_expr + (exact('/\\ ∧') + ineq_expr)[...]
 
 or_expr = and_expr + ((exact('\\/') | kw('xor')) + and_expr)[...]
+# or_expr = and_expr + ((exact('\\/ ∨') | kw('xor')) + and_expr)[...]
 
 iff_expr = or_expr + (exact('<- ->') + or_expr)[...]
+# iff_expr = or_expr + (exact('<- -> ← →') + or_expr)[...]
 
 binary_expr <<= iff_expr + (exact('<->') + iff_expr)[...]
 

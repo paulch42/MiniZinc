@@ -262,6 +262,7 @@ class StringLiteral(AbstractExpr):
 
 class UnaryOp(StrEnum):
     NOT = "not"
+    NOT_SYM = "¬"
     PLUS = "+"
     MINUS = "-"
 
@@ -269,6 +270,7 @@ class UnaryOp(StrEnum):
 unary_operators: dict[UnaryOp, tuple[Assoc, int]] = {
     # Precedence must be greater than anootation (::), but less than any other binary operator.
     UnaryOp.NOT: (Assoc.RIGHT, 50),
+    UnaryOp.NOT_SYM: (Assoc.RIGHT, 50),
     UnaryOp.PLUS: (Assoc.RIGHT, 50),
     UnaryOp.MINUS: (Assoc.RIGHT, 50),
 }
@@ -315,27 +317,39 @@ class BinaryOp(StrEnum):
     RANGE_EX_H = "..<"
     RANGE_EX_LH = "<..<"
     INTERSECT = "intersect"
+    INTERSECT_SYM = "∩"
     UNION = "union"
+    UNION_SYM = "∪"
     DIFF = "diff"
     SYMDIFF = "symdiff"
     IN = "in"
+    IN_SYM = "∈"
     SUBSET = "subset"
+    SUBSET_SYM = "⊆"
     SUPERSET = "superset"
+    SUPERSET_SYM = "⊇"
     EQEQ = "=="
     EQ = "="
     EQ_OPT = "~="
     NEQ = "!="
+    NEQ_SYM = "≠"
     NEQ_OPT = "~!="
     LT = "<"
     GT = ">"
     LEQ = "<="
+    LEQ_SYM = "≤"
     GEQ = ">="
+    GEQ_SYM = "≥"
     AND = "/\\"
+    AND_SYM = "∧"
     OR = "\\/"
+    OR_SYM = "∨"
     XOR = "xor"
-    IFF = "<->"
     IF = "<-"
+    IF_SYM = "←"
     ONLY_IF = "->"
+    ONLY_IF_SYM = "→"
+    IFF = "<->"
 
 
 # Associativity and precedence table for the binary opertors, as defined in the MiniZinc Reference Manual.
@@ -360,26 +374,38 @@ operators: dict[BinaryOp, tuple[Assoc, int]] = {
     BinaryOp.RANGE_EX_H: (Assoc.NONE, 700),
     BinaryOp.RANGE_EX_LH: (Assoc.NONE, 700),
     BinaryOp.INTERSECT: (Assoc.LEFT, 800),
+    BinaryOp.INTERSECT_SYM: (Assoc.LEFT, 800),
     BinaryOp.UNION: (Assoc.LEFT, 900),
+    BinaryOp.UNION_SYM: (Assoc.LEFT, 900),
     BinaryOp.DIFF: (Assoc.LEFT, 900),
     BinaryOp.SYMDIFF: (Assoc.LEFT, 900),
     BinaryOp.IN: (Assoc.NONE, 1000),
+    BinaryOp.IN_SYM: (Assoc.NONE, 1000),
     BinaryOp.SUBSET: (Assoc.NONE, 1000),
+    BinaryOp.SUBSET_SYM: (Assoc.NONE, 1000),
     BinaryOp.SUPERSET: (Assoc.NONE, 1000),
+    BinaryOp.SUPERSET_SYM: (Assoc.NONE, 1000),
     BinaryOp.EQEQ: (Assoc.NONE, 1100),
     BinaryOp.EQ: (Assoc.NONE, 1100),
     BinaryOp.EQ_OPT: (Assoc.NONE, 1100),
     BinaryOp.NEQ: (Assoc.NONE, 1100),
+    BinaryOp.NEQ_SYM: (Assoc.NONE, 1100),
     BinaryOp.NEQ_OPT: (Assoc.NONE, 1100),
     BinaryOp.LT: (Assoc.NONE, 1200),
     BinaryOp.GT: (Assoc.NONE, 1200),
     BinaryOp.LEQ: (Assoc.NONE, 1200),
+    BinaryOp.LEQ_SYM: (Assoc.NONE, 1200),
     BinaryOp.GEQ: (Assoc.NONE, 1200),
+    BinaryOp.GEQ_SYM: (Assoc.NONE, 1200),
     BinaryOp.AND: (Assoc.LEFT, 1300),
+    BinaryOp.AND_SYM: (Assoc.LEFT, 1300),
     BinaryOp.OR: (Assoc.LEFT, 1400),
+    BinaryOp.OR_SYM: (Assoc.LEFT, 1400),
     BinaryOp.XOR: (Assoc.LEFT, 1400),
     BinaryOp.IF: (Assoc.LEFT, 1500),
+    BinaryOp.IF_SYM: (Assoc.LEFT, 1500),
     BinaryOp.ONLY_IF: (Assoc.LEFT, 1500),
+    BinaryOp.ONLY_IF_SYM: (Assoc.LEFT, 1500),
     BinaryOp.IFF: (Assoc.LEFT, 1600),
 }
 

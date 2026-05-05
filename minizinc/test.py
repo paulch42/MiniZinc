@@ -312,6 +312,7 @@ def test_string_literal():
     assert x.exprs[1] == Ident('three')
     assert string_literal.parse_string(r'"   "', parse_all=True)[
         0].strs[0] == '   '
+    assert string_literal.parse_string('"unicode ∈ and ∧ "', parse_all=True)
     assert string_literal.parse_string(r'"one embedded \" quote"', parse_all=True)
     assert string_literal.parse_string(r'"nested \"quote\""', parse_all=True)
     assert string_literal.parse_string(r'"coord=(\"\(sin(x))\",\"\(cos(y))\")"', parse_all=True)
