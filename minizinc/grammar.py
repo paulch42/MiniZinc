@@ -78,12 +78,14 @@ bool_literal = kw('true false')
 int_literal = pp.Regex(
     '0x[0-9a-fA-F]+') | pp.Regex('0o[0-7]+') | pp.Regex('[0-9]+')
 
-float_literal = pp.Regex(r'[0-9]+\.[0-9]+([eE][-+]?[0-9]+)?') | pp.Regex(r'[0-9]+[eE][-+]?[0-9]+') | pp.Regex(r'0[xX]([0-9a-fA-F]*\.[0-9a-fA-F]+|[0-9a-fA-F]+\.)[pP][-+]?[0-9]+') | pp.Regex('0[xX][0-9a-fA-F]+[pP][-+]?[0-9]+')
+float_literal = pp.Regex(r'[0-9]+\.[0-9]+([eE][-+]?[0-9]+)?') | pp.Regex(r'[0-9]+[eE][-+]?[0-9]+') | pp.Regex(
+    r'0[xX]([0-9a-fA-F]*\.[0-9a-fA-F]+|[0-9a-fA-F]+\.)[pP][-+]?[0-9]+') | pp.Regex('0[xX][0-9a-fA-F]+[pP][-+]?[0-9]+')
 
 mixed_string = (pp.SkipTo(r'\(').leave_whitespace(
 ) + skip(r'\(') + binary_expr + skip(')'))[...] + pp.Regex(r'.*').leave_whitespace()
 
-string_literal = pp.QuotedString('"',esc_quote='\\"',convert_whitespace_escapes=False)
+string_literal = pp.QuotedString(
+    '"', esc_quote='\\"', convert_whitespace_escapes=False)
 
 quoted_op = pp.Combine(skip("'") + binary_op + skip("'"))
 
@@ -109,12 +111,18 @@ array_comp = delimit(
 
 tuple_index = binary_expr | delimit('(', expr_seq, ')')
 
-indexed_expr = tuple_index + skip(':') + binary_expr + opt(skip(',') + binary_expr)
+indexed_expr = tuple_index + skip(':') + binary_expr + (skip(',') + binary_expr + ~exact(':'))[...]
 
 indexed_array_literal = delimit(
     '[', opt(iterate(indexed_expr, ',', True)), ']')
 
-indexed_array_literal_2d = skip('TODO')
+column_indices = (binary_expr + skip(':'))[1,...] + skip('|')
+
+indexed_row = opt(binary_expr + skip(':')) + expr_seq
+
+indexed_array_2d_content = iterate(indexed_row, exact('|')+~exact(']'), True)
+
+indexed_array_literal_2d = delimit('[|', opt(column_indices) + opt(indexed_array_2d_content), '|]')
 
 indexed_array_comp = delimit(
     '[', (indexed_expr + skip('|') + iterate(generator, ',', True)), ']')
@@ -126,7 +134,7 @@ labelled_expr = ident + skip(':') + binary_expr
 record_literal = delimit('(', iterate(labelled_expr, ',', True), ')')
 
 conditional_expr = kwskip('if') + binary_expr + kwskip('then') + binary_expr + (kwskip('elseif') +
-                                                                  binary_expr + kwskip('then') + binary_expr)[...] + opt(kwskip('else') + binary_expr) + kwskip('endif')
+                                                                                binary_expr + kwskip('then') + binary_expr)[...] + opt(kwskip('else') + binary_expr) + kwskip('endif')
 
 let_expr = kwskip('let') + skip('{') + iterate((var_decl_item |
                                                 constraint_item), ';', True) + skip('}') + kwskip('in') + binary_expr
@@ -136,7 +144,7 @@ call_expr = (ident | quoted_op) + delimit('(', expr_seq, ')')
 call_comp_expr = (ident | quoted_op) + delimit('(',
                                                iterate(generator, ',', True), ')') + delimit('(', binary_expr, ')')
 
-basic_expr = delimit('(', binary_expr, ')') | absent_literal | bool_literal | float_literal | int_literal | string_literal | set_literal | set_comp | array_literal | indexed_array_literal | array_literal_2d | array_comp | tuple_literal | record_literal | conditional_expr | let_expr | call_comp_expr | call_expr | ident | anon_var | quoted_op
+basic_expr = delimit('(', binary_expr, ')') | absent_literal | bool_literal | float_literal | int_literal | string_literal | set_literal | set_comp | array_literal | indexed_array_literal | array_literal_2d | indexed_array_literal_2d | array_comp | tuple_literal | record_literal | conditional_expr | let_expr | call_comp_expr | call_expr | ident | anon_var | quoted_op
 
 array_accessor = delimit('[', expr_seq, ']')
 
@@ -175,7 +183,8 @@ set_test_expr = set_op_expr + opt(kw('in subset superset') + set_op_expr)
 eq_expr = set_test_expr + opt(exact('== = != ~= ~!=') + set_test_expr)
 
 # Exclude '-' after'<' to allow '<-' (production 'iff_expr').
-ineq_expr = eq_expr + opt((exact('<= >= >') | exact('<')+~ exact('-').leave_whitespace()) + eq_expr)
+ineq_expr = eq_expr + \
+    opt((exact('<= >= >') | exact('<')+~ exact('-').leave_whitespace()) + eq_expr)
 
 and_expr = ineq_expr + (exact('/\\') + ineq_expr)[...]
 
@@ -250,9 +259,11 @@ comment_item = inline_comment | block_comment
 
 model_item = include_item | var_decl_item | enum_item | type_synonym_item | assign_item | constraint_item | solve_item | output_item | predicate_item | tst_item | function_item | annotation_item | comment_item
 
-minizinc_model = (comment_item | model_item + skip(';'))[...] + opt(model_item + comment_item[...])
+minizinc_model = (comment_item | model_item + skip(';')
+                  )[...] + opt(model_item + comment_item[...])
 
-def mz_parse(ignore_inline=True,ignore_block=True):
+
+def mz_parse(ignore_inline=True, ignore_block=True):
     if ignore_inline:
         minizinc_model.ignore(inline_comment)
     if ignore_block:

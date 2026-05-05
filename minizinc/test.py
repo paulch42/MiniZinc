@@ -460,23 +460,48 @@ def test_array_comp():
 
 
 def test_tuple_index():
-    pass
+    assert tuple_index.parse_string('1', parse_all=True)
+    assert tuple_index.parse_string('A', parse_all=True)
+    assert tuple_index.parse_string('(1,2)', parse_all=True)
 
 
 def test_indexed_expr():
-    pass
+    assert indexed_expr.parse_string('1:2', parse_all=True)
+    assert indexed_expr.parse_string('A:0', parse_all=True)
+    assert indexed_expr.parse_string('(8,9):2', parse_all=True)
+    assert indexed_expr.parse_string('0: A,B, C', parse_all=True)
 
 
 def test_indexed_array_literal():
-    pass
+    assert indexed_array_literal.parse_string('[1:1]', parse_all=True)
+    assert indexed_array_literal.parse_string('[A:2]', parse_all=True)
+    assert indexed_array_literal.parse_string('[(8,9):2]', parse_all=True)
+    assert indexed_array_literal.parse_string('[0: A,B, C]', parse_all=True)
+    assert indexed_array_literal.parse_string('[A:0,B:3,C:5]', parse_all=True)
+    assert indexed_array_literal.parse_string('[(1,2):1, (1,3):2, (2,2):3, (2,3):4]', parse_all=True)
 
 
 def test_indexed_array_literal_2d():
-    pass
+    assert indexed_array_literal_2d.parse_string('[| |]', parse_all=True)
+    assert indexed_array_literal_2d.parse_string('[| A: B: C: | |]', parse_all=True)
+    assert indexed_array_literal_2d.parse_string('[| 1,2,3 |]', parse_all=True)
+    assert indexed_array_literal_2d.parse_string('[| X: 1,2,3 |]', parse_all=True)
+    assert indexed_array_literal_2d.parse_string('[| X:1 |]', parse_all=True)
+    assert indexed_array_literal_2d.parse_string('[| A: B: C: | 0,0,0 | 1,1,1 | 2,2,2 |]', parse_all=True)
+    assert indexed_array_literal_2d.parse_string('[| A: 0,0,0 | B: 1,1,1 | C: 2,2,2 |]', parse_all=True)
+    assert indexed_array_literal_2d.parse_string('[| A: B: C: | A: 0,0,0 | B: 1,1,1 | C: 2,2,2 |]', parse_all=True)
+    assert indexed_array_literal_2d.parse_string('[| 1,2,3 | 4,5,6 |]', parse_all=True)
+    with pytest.raises(ParseException):
+        assert indexed_array_literal_2d.parse_string('[| A: B: 1 |]', parse_all=True)
+    with pytest.raises(ParseException):
+        assert indexed_array_literal_2d.parse_string('[| A: B: C: | D: E: F: | |]', parse_all=True)
+    with pytest.raises(ParseException):
+        assert indexed_array_literal_2d.parse_string('[| 1,2,3 | D: E: F: | |]', parse_all=True)
 
 
 def test_indexed_array_comp():
-    pass
+    assert indexed_array_comp.parse_string('[i: 3*i | i in 3..5]', parse_all=True)
+    assert indexed_array_comp.parse_string('[(i,j): i*3+j | i in 2..4, j in 1..3]', parse_all=True)
 
 
 def test_tuple_literal():

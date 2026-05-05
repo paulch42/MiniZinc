@@ -461,6 +461,48 @@ class ArrayComp(AbstractExpr):
 
 
 @dataclass
+class IndexedExpr():
+    index: AbstractExpr
+    vals: list[AbstractExpr] = field(default_factory=list)
+
+    def __str__(self):
+        return f'{self.index}: {fmt_list(self.vals)}'
+
+
+@dataclass
+class IndexedArrayLiteral(AbstractExpr):
+    members: list[IndexedExpr] = field(default_factory=list)
+
+    def __str__(self):
+        return f'[{fmt_list(self.members)}]'
+
+
+@dataclass
+class IndexedRow():
+    index: AbstractExpr | None = None
+    row: list[AbstractExpr] = field(default_factory=list)
+
+    def __str__(self):
+        prefix = f'{self.index}: ' if self.index else ''
+        return prefix + fmt_list(self.row)
+
+
+@dataclass
+class IndexedArrayLiteral2D():
+    column_indices: list[AbstractExpr] = field(default_factory=list)
+    rows: list[IndexedRow] = field(default_factory=list)
+
+    def __str__(self):
+        cind = fmt_list(self.column_indices, ':')
+        if cind:
+            cind += ':'
+            items = [cind] + self.rows
+        else:
+            items = self.rows
+        return f'[| {" | ".join([str(i) for i in items])} |]'
+
+
+@dataclass
 class TupleLiteral(AbstractExpr):
     members: list[AbstractExpr] = field(default_factory=list)
 

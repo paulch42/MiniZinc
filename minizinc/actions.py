@@ -55,7 +55,7 @@ def record_type_action(tokens):
 
 
 def array_type_action(tokens):
-    return ArrayType(tokens[-1],tokens[:-1])
+    return ArrayType(tokens[-1], tokens[:-1])
 
 
 def var_type_action(tokens):
@@ -116,7 +116,7 @@ def float_literal_action(tokens):
 
 def string_literal_action(tokens):
     ms = mixed_string.parse_string(tokens[0])
-    return StringLiteral([s.replace('"','\\"') for s in ms[0::2]], [e for e in ms[1::2]])
+    return StringLiteral([s.replace('"', '\\"') for s in ms[0::2]], [e for e in ms[1::2]])
 
 
 def quoted_op_action(tokens):
@@ -158,6 +158,34 @@ def array_literal_2d_action(tokens):
 
 def array_comp_action(tokens):
     return ArrayComp(tokens[0], tokens[1:])
+
+
+def indexed_expr_action(tokens):
+    return IndexedExpr(tokens[0], tokens[1:])
+
+
+def indexed_array_literal_action(tokens):
+    return IndexedArrayLiteral(list(tokens))
+
+
+def column_indices_action(tokens):
+    return [tokens]
+
+
+def indexed_row_action(tokens):
+    if len(tokens) == 1:
+        return IndexedRow(None, tokens[0].exprs)
+    else:
+        return IndexedRow(tokens[0], tokens[1].exprs)
+
+
+def indexed_array_literal_2d_action(tokens):
+    if not tokens:
+        return IndexedArrayLiteral2D([], [])
+    if isinstance(tokens[0], IndexedRow):
+        return IndexedArrayLiteral2D([], list(tokens))
+    else:
+        return IndexedArrayLiteral2D(list(tokens[0]), tokens[1:])
 
 
 def tuple_literal_action(tokens):
@@ -206,6 +234,7 @@ def unary_expr_action(tokens):
         expr = UnaryExpr(expr, UnaryOp(o))
     return expr
 
+
 def construct(arg):
     """
     Construct a binary expression from a list of expressions interleaved with binary operators,
@@ -236,6 +265,7 @@ def construct(arg):
         for (a, o) in zip(rest, ops):
             res = BinaryExpr(a, BinaryOp(o), res)
     return res
+
 
 def binary_op_action(tokens):
     return construct(prune(tokens))
@@ -379,7 +409,7 @@ def function_defn_action(tokens):
     args = [a for a in tokens[1:] if isinstance(a, VarDecl)]
     next = len(args)+1
     anns = None
-    if len(tokens) > next and isinstance(tokens[next],Annotation):
+    if len(tokens) > next and isinstance(tokens[next], Annotation):
         anns = tokens[next]
         next += 1
     body = tokens[-1] if len(tokens) > next else None
@@ -445,6 +475,11 @@ set_comp.set_parse_action(set_comp_action)
 array_literal.set_parse_action(array_literal_action)
 array_literal_2d.set_parse_action(array_literal_2d_action)
 array_comp.set_parse_action(array_comp_action)
+indexed_expr.set_parse_action(indexed_expr_action)
+indexed_array_literal.set_parse_action(indexed_array_literal_action)
+column_indices.set_parse_action(column_indices_action)
+indexed_row.set_parse_action(indexed_row_action)
+indexed_array_literal_2d.set_parse_action(indexed_array_literal_2d_action)
 tuple_literal.set_parse_action(tuple_literal_action)
 labelled_expr.set_parse_action(labelled_expr_action)
 record_literal.set_parse_action(record_literal_action)
