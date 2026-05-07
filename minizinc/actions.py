@@ -135,13 +135,16 @@ def condition_action(tokens):
     return Condition(tokens[0])
 
 
+def generate_in_action(tokens):
+    return GenerateIn(tokens[-1], tokens[:-1])
+
+
+def generate_eq_action(tokens):
+    return GenerateEq(tokens[0], tokens[1])
+
+
 def generator_action(tokens):
-    condition = None
-    last = len(tokens)-1
-    if isinstance(tokens[last], Condition):
-        condition = tokens[-1].expr
-        last -= 1
-    return Generator(tokens[last], tokens[:last], condition)
+    return Generator(tokens[0], tokens[1] if len(tokens) > 1 else None)
 
 
 def set_comp_action(tokens):
@@ -470,6 +473,8 @@ expr_seq.set_parse_action(expr_seq_action)
 quoted_op.set_parse_action(quoted_op_action)
 set_literal.set_parse_action(set_literal_action)
 condition.set_parse_action(condition_action)
+generate_in.set_parse_action(generate_in_action)
+generate_eq.set_parse_action(generate_eq_action)
 generator.set_parse_action(generator_action)
 set_comp.set_parse_action(set_comp_action)
 array_literal.set_parse_action(array_literal_action)

@@ -443,13 +443,30 @@ class Condition():
 
 
 @dataclass
-class Generator():
+class GenerateIn():
     domain: AbstractExpr
     ids: list[Ident | AnonVar] = field(default_factory=list)
+
+    def __str__(self):
+        return f'{fmt_list(self.ids, ",")} in {self.domain}'
+
+
+@dataclass
+class GenerateEq():
+    id: Ident | AnonVar
+    val: AbstractExpr
+
+    def __str__(self):
+        return f'{self.id} = {self.val}'
+
+
+@dataclass
+class Generator():
+    generate: GenerateIn | GenerateEq
     condition: AbstractExpr | None = None
 
     def __str__(self):
-        return f'{fmt_list(self.ids, ",")} in {self.domain}{add_option(self.condition, prefix=" where ")}'
+        return f'{self.generate}{add_option(self.condition, prefix=" where ")}'
 
 
 @dataclass

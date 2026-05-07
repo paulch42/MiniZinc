@@ -98,8 +98,11 @@ set_literal = delimit('{', opt(expr_seq), '}')
 
 condition = kwskip('where') + binary_expr
 
-generator = iterate((ident | anon_var), ',', True) + \
-    kwskip('in') + binary_expr + opt(condition)
+generate_in = iterate((ident | anon_var), ',', True) + kwskip('in') + binary_expr
+
+generate_eq = (ident | anon_var) + skip('=') + binary_expr
+
+generator = (generate_in | generate_eq) + opt(condition)
 
 set_comp = delimit(
     '{', (binary_expr + skip('|') + iterate(generator, ',', True)), '}')

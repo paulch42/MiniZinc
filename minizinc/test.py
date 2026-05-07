@@ -388,10 +388,15 @@ def test_generator():
     assert generator.parse_string('x in [1,2,3]', parse_all=True)
     assert generator.parse_string('x,y,z in [1,2,3]', parse_all=True)
     assert generator.parse_string('x,y in [1,2,3] where true', parse_all=True)
+    assert generator.parse_string('_ in [1,2,3]', parse_all=True)
+    assert generator.parse_string('x = [1,2,3]', parse_all=True)
+    assert generator.parse_string('_ =  [1,2,3] where p', parse_all=True)
     with pytest.raises(ParseException):
         assert generator.parse_string('x in bool', parse_all=True)
     with pytest.raises(ParseException):
         assert generator.parse_string('x,y in [1,2,3] if true', parse_all=True)
+    with pytest.raises(ParseException):
+        assert generator.parse_string('x,y = [1,2,3]', parse_all=True)
 
 
 def test_set_comp():
