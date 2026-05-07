@@ -33,7 +33,7 @@ type TMI_config = record(
 TMI_config: config;
 
 % The runways available during the TMI (derived).
-set of RUNWAY: available = { r | r in RUNWAY where config.rate[r] != <> };
+set of RUNWAY: available = { r | r in RUNWAY where occurs(config.rate[r]) };
 
 % Information on a flight that requires a slot in the TMI.
 type flight = record(
@@ -80,7 +80,7 @@ array[FLIGHT] of var opt TMI_TIME: slot;
 array[FLIGHT] of var opt available: rwy;
 
 % The flights that are allocated a slot by the TMI (derived).
-var set of FLIGHT: allocated = { f | f in FLIGHT where slot[f] != <> };
+var set of FLIGHT: allocated = { f | f in FLIGHT where occurs(slot[f]) };
 
 % The flights that are excluded from the TMI (derived).
 var set of FLIGHT: excluded = FLIGHT diff allocated;
@@ -102,7 +102,7 @@ constraint forall(f in allocated)(slot[f] in flights[f].earliest..flights[f].lat
 constraint forall(f, g in allocated where f < g /\ rwy[f] = rwy[g])(abs(slot[f]-slot[g]) >= config.rate[rwy[f]]);
 
 % 'slot' and 'rwy' are both undefined if flight not allocated a slot.
-constraint forall(f in FLIGHT)(slot[f] = <> <-> rwy[f] = <>);
+constraint forall(f in FLIGHT)(absent(slot[f]) <-> absent(rwy[f]));
 
 /*
   Objective

@@ -72,7 +72,7 @@ predicate connected(var ROW: thisr, var COL: thisc, var opt track_piece: piece, 
 constraint forall(p in PATH)(pathrc[p] = (pathr[p]-1) * cols + pathc[p]);
 
 % channel 'pathr/c' and 'solution'
-constraint forall(p in PATH)(solution[pathr[p],pathc[p]] != <>);
+constraint forall(p in PATH)(occurs(solution[pathr[p],pathc[p]]));
 
 % the fixed pieces in the initial configuration must be retained
 constraint forall(p in fixed)(solution[p.1,p.2] = p.3);
@@ -84,10 +84,10 @@ constraint forall(p in 1..num_pieces-1)(connected(pathr[p], pathc[p], solution[p
 constraint alldifferent(pathrc);
 
 % constrain number of track pieces in each row and column
-constraint forall(r in ROW)(count(c in COL)(solution[r,c] != <>) = row_counts[r]);
-constraint forall(c in COL)(count(r in ROW)(solution[r,c] != <>) = col_counts[c]);
+constraint forall(r in ROW)(count(c in COL)(occurs(solution[r,c])) = row_counts[r]);
+constraint forall(c in COL)(count(r in ROW)(occurs(solution[r,c])) = col_counts[c]);
 
-% The following collection of constraints are functionally redundant, but improve performance
+% The following collection of constraints is functionally redundant, but improves performance
 % significantly by allowing solver to avoid dead end paths.
 
 % constraints on track pieces:
