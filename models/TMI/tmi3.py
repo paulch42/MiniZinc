@@ -20,12 +20,15 @@ def encode_flt(id,flt):
         flt['preferred'] = encode_time(time.fromisoformat(flt['preferred']))
         flt['earliest'] = encode_time(time.fromisoformat(flt['earliest']))
         flt['latest'] = encode_time(time.fromisoformat(flt['latest']))
-        flt['rwy'] = {runways.index(r)+1 for r in flt['rwy']}
+        flt['rwy'] = {active_rwy.index(r)+1 for r in flt['rwy'] if r in active_rwy}
     except Exception as e:
         print(f'Invalid data for "{id}"')
         raise e
     return flt
 
+narrow = 0
+if len(sys.argv) > 2:
+    narrow = int(sys.argv[2])
 
 # load airport data
 root = f'data/tmi{sys.argv[1]}'
@@ -36,6 +39,7 @@ with open(f'{root}/airport.json', 'r') as file:
 with open(f'{root}/tmi-config.json', 'r') as file:
     config = json.load(file)
 airport = config['airport']
+runways = airports[airport]['runway']
 dt = date.fromisoformat(config['date'])
 start = time.fromisoformat(config['start'])
 config['start'] = encode_time(start)
@@ -43,21 +47,40 @@ end = time.fromisoformat(config['end'])
 config['end'] = encode_time(end)
 del config['airport']
 del config['date']
-runways = airports[airport]['runway']
+active_rwy = []
+active_rate = []
+for rwy,rate in zip(runways, config['rate']):
+    if rate:
+        active_rwy += [rwy]
+        active_rate += [rate]
+config['rate'] = active_rate
 
 # load flight data
 with open(f'{root}/flight.json', 'r') as file:
     flight = json.load(file)
 fids = list(flight.keys())
 flights = [encode_flt(key,value) for key,value in flight.items()]
+candidates = []
+for i,f in enumerate(flights):
+    for r in f['rwy']:
+        lower = max(config['start'],f['earliest'])
+        upper = min(config['end'],f['latest'])
+        mid = f['preferred']
+        if narrow:
+            lower += round((mid-lower)*narrow/100)
+            upper -= round((upper-mid)*narrow/100)
+        for t in range(lower,upper+1):
+            candidates += [[i+1,r,t]]
+    candidates += [[i+1,-1,-1]]
 
 # initialise the input data and run the solver
-model = Model('./tmi.mzn')
+model = Model('./tmi3.mzn')
 solver = Solver.lookup('chuffed')
 instance = Instance(solver, model)
-instance["num_runways"] = len(runways)
+instance["num_runways"] = len(active_rwy)
 instance["config"] = config
 instance["flights"] = flights
+instance['candidates'] = candidates
 result = instance.solve()
 if not result:
     print('No departure schedule satisfies the constraints')
@@ -66,17 +89,13 @@ if not result:
 # output the results
 print(f'TMI Schedule for {airport} on {dt}')
 print(f'Commences: {start.strftime("%H:%M")}, Ends: {end.strftime("%H:%M")}')
-slot = result['slot']
-runway = result['rwy']
-res = sorted([(i, slot[i], runway[i]) for i in range(len(slot))
-              if slot[i] is not None], key=lambda x: x[1])
-for r in res:
-    print(f'  {fids[r[0]].ljust(8)}: {decode_time(r[1])} - {runways[r[2]-1]}')
-found = False
-for i in range(len(slot)):
-    if slot[i] is None:
-        if not found:
-            found = True
-            print("Excluded:")
-        print(f'  {fids[i]}')
+for r in range(len(active_rwy)):
+    print(f'Runway: {active_rwy[r]}')
+    ft = [(id,tkof) for [id,rwy,tkof] in result['schedule'] if rwy == r+1]
+    for (i,t) in ft:
+        print(f'  {fids[i-1].ljust(8)}: {decode_time(t)}')
+excluded = [fids[id-1] for [id,rwy,_] in result['schedule'] if rwy == -1]
+if excluded:
+    print('Excluded:')
+    print('\n'.join([f'  {i}' for i in excluded]))
 print(f'Cost: {result['cost']}')

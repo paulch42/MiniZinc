@@ -1,20 +1,20 @@
 {
     "openFiles": [
-        "tmi.mzn",
-        "tmi-standalone.mzn",
-        "data/data1.dzn",
-        "data/data1s.dzn",
-        "data/data2.dzn",
-        "data/data2s.dzn"
+        "tmi1.mzn",
+        "tmi2.mzn",
+        "tmi3.mzn"
     ],
-    "openTab": 5,
+    "openTab": 2,
     "projectFiles": [
-        "data/data1.dzn",
-        "data/data1s.dzn",
-        "data/data2.dzn",
-        "data/data2s.dzn",
-        "tmi-standalone.mzn",
-        "tmi.mzn"
+        "data/tmi1-1.dzn",
+        "data/tmi1-2.dzn",
+        "data/tmi2-1.dzn",
+        "data/tmi2-2.dzn",
+        "data/tmi3-1.dzn",
+        "data/tmi3-2.dzn",
+        "tmi1.mzn",
+        "tmi2.mzn",
+        "tmi3.mzn"
     ],
     "selectedBuiltinConfigId": "org.gecode.gecode",
     "selectedBuiltinConfigVersion": "6.3.0",

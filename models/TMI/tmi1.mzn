@@ -16,51 +16,51 @@ set of int: TMI_TIME = config.start..config.end;
 % The maximum time (in minutes) the TMI enforces between two consecutive takeoffs.
 int: max_separation = 15;
 
-% The runways at the airport. Each runway is represented by a unique integer.
-int: num_runways;
-set of int: RUNWAY = 1..num_runways;
+% The runways at the airport.
+enum runway;
 
 % Configuration information required to run a TMI.
 type TMI_config = record(
+                      string: id,   % TMI identifier
                       TIME: start,  % TMI commences
                       TIME: end,    % TMI finishes
-                      array[RUNWAY] of opt 1..max_separation: rate
+                      array[runway] of opt 1..max_separation: rate
                                     % The rate of each runway - the minimum duration between consecutive takeoffs.
-                                    % If <>, indicates the runway is not available during the TMI.
+                                    % If <>, indicates the runway does not participate in the TMI.
                   );
 
 % The TMI configuration.
 TMI_config: config;
 
-% The runways available during the TMI (derived).
-set of RUNWAY: available = { r | r in RUNWAY where occurs(config.rate[r]) };
+% The runways participating in the TMI (derived).
+set of runway: available = { r | r in runway where occurs(config.rate[r]) };
 
 % Information on a flight that requires a slot in the TMI.
 type flight = record(
+                  string: id,         % flight identifier (callsign)
                   TIME: preferred,    % preferred takeoff time
                   TIME: earliest,     % earliest possible takeoff time
                   TIME: latest,       % latest possible takeoff time
-                  set of RUNWAY: rwy  % runways the flight is able to use
+                  set of runway: rwy  % runways the flight is able to use
               );
 
-% The flights participating in the TMI. Each flight is represented by a unique integer.
+% The flights participating in the TMI.
 list of flight: flights;
 set of int: FLIGHT = 1..length(flights);
  
-/*
+ /*
   Validate the input data.
 */
 
 % The TMI period is non-empty.
 constraint assert(config.start < config.end, "Start of TMI period (\(config.start)) must precede end (\(config.end))");
 
-% A flight must be able to takeoff from one of the available runways.
+% A flight must be able to takeoff from one of the participating runways.
 constraint forall(f in FLIGHT)(assert(flights[f].rwy intersect available != {},
-                                      "Flight \(f) cannot use any of the available runways (\(available))"));
+                                      "Flight \(f) cannot use any of the participating runways (\(available))"));
 
 % The preferred takeoff time for a flight must be in its takeoff window.
-% constraint forall(f in FLIGHT)(assert(flights[f].earliest <= flights[f].preferred /\ flights[f].preferred <= flights[f].latest,
-constraint forall(f in FLIGHT)(assert(flights[f].preferred in flights[f].earliest..flights[f].latest,
+constraint forall(f in FLIGHT)(assert(flights[f].earliest <= flights[f].preferred /\ flights[f].preferred <= flights[f].latest,
                                       "Flight \(f): preferred time (\(flights[f].preferred)) in not in " ++
                                       "takeoff window (\(flights[f].earliest)..\(flights[f].latest))"));
 
@@ -76,7 +76,7 @@ constraint forall(f in FLIGHT)(assert(flights[f].earliest <= config.end /\ confi
 % The slot (target takeoff time) allocated to each flight. If <>, indicates flight was not allocated a slot.
 array[FLIGHT] of var opt TMI_TIME: slot;
 
-% The runway allocated to each flight. If <>, indicates flight was not allocated a slot.
+% The runway allocated to each flight.
 array[FLIGHT] of var opt available: rwy;
 
 % The flights that are allocated a slot by the TMI (derived).
@@ -85,24 +85,22 @@ var set of FLIGHT: allocated = { f | f in FLIGHT where occurs(slot[f]) };
 % The flights that are excluded from the TMI (derived).
 var set of FLIGHT: excluded = FLIGHT diff allocated;
 
+
 /*
   Constraints
 */
+
+% Two flights allocated the same runway must depart at least the 'rate' duration apart.
+constraint forall(f, g in allocated where f < g /\ rwy[f] = rwy[g])(abs(slot[f]-slot[g]) >= config.rate[rwy[f]]);
 
 % A flight must be allocated a runway it is able to use.
 constraint forall(f in allocated)(rwy[f] in flights[f].rwy);
 
 % The time allocated to a flight must fall within its takeoff window.
-constraint forall(f in allocated)(slot[f] in flights[f].earliest..flights[f].latest);
+constraint forall(f in allocated)(slot[f] in flights[f].earliest ..flights[f].latest);
 
 % The time allocated to a flight must fall within the TMI period.
 % Explicit constraint not required; handled by restricting codomain of 'slot' to TMI_TIME.
-
-% Two flights allocated the same runway must depart at least the 'rate' duration apart.
-constraint forall(f, g in allocated where f < g /\ rwy[f] = rwy[g])(abs(slot[f]-slot[g]) >= config.rate[rwy[f]]);
-
-% 'slot' and 'rwy' are both undefined if flight not allocated a slot.
-constraint forall(f in FLIGHT)(absent(slot[f]) <-> absent(rwy[f]));
 
 /*
   Objective
@@ -110,13 +108,24 @@ constraint forall(f in FLIGHT)(absent(slot[f]) <-> absent(rwy[f]));
 
 % The length of time a flight's takeoff window overlaps the TMI period.
 function var int: overlap(var FLIGHT: f) =
-                  abs(max(config.start,flights[f].earliest) - min(config.end,flights[f].latest));
+                  abs(max(config.start,flights[fix(f)].earliest) - min(config.end,flights[fix(f)].latest));
 
 % The cost of a TMI is the sum of:
 % - for each flight allocated a slot, the difference between its preferred time and allocated time;
 % - for a flight not allocated a slot, the overlap between the flight's takeoff window and the TMI period.
-var int: cost;
-constraint cost = sum(f in allocated)(abs(flights[f].preferred - slot[f])) + sum(f in excluded)(overlap(f));
+var int: cost = sum(f in allocated)(abs(flights[f].preferred - slot[f])) + sum(f in excluded)(overlap(f));
 
 % The goal is to minimize the cost of the TMI.
 solve minimize cost;
+
+% The remainder outputs the solution.
+function string: format_time(var opt TIME: t) = pad(-2, show(t div 60), "0") ++ ":" ++ pad(-2, show(t mod 60), "0");
+
+function string: pad(int: w, string: s, string: p) = concat(if w < 0
+                                                            then [ p | i in 1..abs(w)-string_length(s) ] ++ [s]
+                                                            else [s] ++ [ p | i in 1..abs(w)-string_length(s) ]
+                                                            endif);
+
+output [ "Schedule for TMI " ++ config.id ++ ":\n"] ++
+       [ "    " ++ format_justify_string(-7, flights[f].id) ++ ": " ++ format_time(slot[f]) ++ " - \(rwy[f])\n" | f in fix(allocated) ] ++
+       [ "excluded: " ] ++ [ flights[e].id ++ " " | e in fix(excluded) ] ++ [ "\ncost: \(cost)"];
