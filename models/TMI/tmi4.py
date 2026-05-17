@@ -26,9 +26,9 @@ def encode_flt(id,flt):
         raise e
     return flt
 
-narrow = 0
+filter = 0
 if len(sys.argv) > 2:
-    narrow = int(sys.argv[2])
+    filter = int(sys.argv[2])
 
 # load airport data
 root = f'data/tmi{sys.argv[1]}'
@@ -60,29 +60,14 @@ with open(f'{root}/flight.json', 'r') as file:
     flight = json.load(file)
 fids = list(flight.keys())
 flights = [encode_flt(key,value) for key,value in flight.items()]
-candidates = []
-for i,f in enumerate(flights):
-    for r in f['rwy']:
-        lower = max(config['start'],f['earliest'])
-        upper = min(config['end'],f['latest'])
-        mid = f['preferred']
-        if narrow:
-            lower += round((mid-lower)*narrow/100)
-            upper -= round((upper-mid)*narrow/100)
-        for t in range(lower,upper+1):
-            candidates.append([i+1,r,t])
-    candidates.append([i+1,-1,-1])
 
 # initialise the input data and run the solver
-model = Model('./tmi3.mzn')
+model = Model('./tmi4.mzn')
 solver = Solver.lookup('chuffed')
 instance = Instance(solver, model)
-instance["num_runways"] = len(active_rwy)
 instance["config"] = config
-for f in flights:
-    del f['rwy']
 instance["flights"] = flights
-instance['candidates'] = candidates
+instance['filter'] = filter
 result = instance.solve()
 if not result:
     print('No departure schedule satisfies the constraints')

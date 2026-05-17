@@ -1,4 +1,4 @@
-% Run with Chuffed solver for best performance.
+% Run with Chuffed or Huub solver for best performance.
 % The model gets very expensive very quickly as the data size grows.
 
 /*

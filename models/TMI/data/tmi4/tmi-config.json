@@ -2,12 +2,12 @@
     "airport": "YSSY",
     "date": "2026-03-25",
     "start": "08:00",
-    "end": "09:00",
+    "end": "08:30",
     "rate": [
         null,
         null,
+        4,
         3,
-        2,
         null,
         null
     ]

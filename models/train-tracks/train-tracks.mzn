@@ -1,4 +1,4 @@
-% Run with Chuffed solver for best performance
+% Run with Chuffed or Huub solver for best performance
 include "globals.mzn";
 
 /*
@@ -48,7 +48,7 @@ array[ROW,COL] of var opt track_piece: solution;
 % solution path; sequence of cells from 'start' to 'end'
 array[PATH] of var ROW: pathr;           % row indices of path
 array[PATH] of var COL: pathc;           % column indices of path
-array[PATH] of var 1..num_cells: pathrc; % encoded co-ordinates of path; allows fast search with gecode
+array[PATH] of var 1..num_cells: pathrc; % encoded co-ordinates of path; allows faster search with Gecode
 
 /*
   Constraints
@@ -59,13 +59,12 @@ predicate end_point(ROW:i, COL:j) = ([i,j] = start \/ [i,j] = end);
 
 % adjacent cells are connected by a valid piece
 predicate connected(var ROW: thisr, var COL: thisc, var opt track_piece: piece, var ROW: nextr, var COL: nextc) =
-  if     piece = ns then nextr in {thisr+1,thisr-1} /\ thisc = nextc
-  elseif piece = ew then nextr=thisr /\ nextc in {thisc+1,thisc-1}
+  if     piece = ns then nextr in {thisr+1,thisr-1} /\ nextc = thisc
+  elseif piece = ew then nextr = thisr /\ nextc in {thisc+1,thisc-1}
   elseif piece = se then (nextr = thisr /\ nextc = thisc+1) \/ (nextr = thisr+1 /\ nextc = thisc)
   elseif piece = nw then (nextr = thisr /\ nextc = thisc-1) \/ (nextr = thisr-1 /\ nextc = thisc)
   elseif piece = sw then (nextr = thisr /\ nextc = thisc-1) \/ (nextr = thisr+1 /\ nextc = thisc)
   elseif piece = ne then (nextr = thisr /\ nextc = thisc+1) \/ (nextr = thisr-1 /\ nextc = thisc)
-  else true
   endif;
 
 % channel 'pathr/c' and 'pathrc'
@@ -94,33 +93,33 @@ constraint forall(c in COL)(count(r in ROW)(occurs(solution[r,c])) = col_counts[
 % - a piece must be a start/end piece if it leads off the grid
 % - the ends of a piece must connect to another piece
 constraint forall(r in ROW, c in COL where solution[r,c] = ns)((r in {1,rows} -> end_point(r,c)) /\
-                                                         if r > 1 then solution[r-1,c] in {ns,sw,se} else true endif /\
-                                                         if r < rows then solution[r+1,c] in {ns,nw,ne} else true endif);
+                                                         if r > 1 then solution[r-1,c] in {ns,sw,se} endif /\
+                                                         if r < rows then solution[r+1,c] in {ns,nw,ne} endif);
                                                          
 constraint forall(r in ROW, c in COL where solution[r,c] = ew)((c in {1,cols} -> end_point(r,c)) /\
-                                                         if c > 1 then solution[r,c-1] in {ew,ne,se} else true endif /\
-                                                         if c < cols then solution[r,c+1] in {ew,nw,sw} else true endif);
+                                                         if c > 1 then solution[r,c-1] in {ew,ne,se} endif /\
+                                                         if c < cols then solution[r,c+1] in {ew,nw,sw} endif);
 
 constraint forall(r in ROW, c in COL where solution[r,c] = se)((r = rows \/ c = cols -> end_point(r,c)) /\
-                                                         if r < rows then solution[r+1,c] in {ns,nw,ne} else true endif /\
-                                                         if c < cols then solution[r,c+1] in {ew,nw,sw} else true endif);
+                                                         if r < rows then solution[r+1,c] in {ns,nw,ne} endif /\
+                                                         if c < cols then solution[r,c+1] in {ew,nw,sw} endif);
 
 constraint forall(r in ROW, c in COL where solution[r,c] = nw)((1 in {r,c} -> end_point(r,c)) /\
-                                                         if r > 1 then solution[r-1,c] in {ns,sw,se} else true endif /\
-                                                         if c > 1 then solution[r,c-1] in {ew,ne,se} else true endif);
+                                                         if r > 1 then solution[r-1,c] in {ns,sw,se} endif /\
+                                                         if c > 1 then solution[r,c-1] in {ew,ne,se} endif);
 
 constraint forall(r in ROW, c in COL where solution[r,c] = sw)((r=rows \/ c=1 -> end_point(r,c)) /\
-                                                         if r < rows then solution[r+1,c] in {ns,nw,ne} else true endif /\
-                                                         if c > 1 then solution[r,c-1] in {ew,ne,se} else true endif);
+                                                         if r < rows then solution[r+1,c] in {ns,nw,ne} endif /\
+                                                         if c > 1 then solution[r,c-1] in {ew,ne,se} endif);
 
 constraint forall(r in ROW, c in COL where solution[r,c] = ne)((r=1 \/ c=cols -> end_point(r,c)) /\
-                                                         if r > 1 then solution[r-1,c] in {ns,sw,se} else true endif /\
-                                                         if c < cols then solution[r,c+1] in {ew,nw,sw} else true endif);
+                                                         if r > 1 then solution[r-1,c] in {ns,sw,se} endif /\
+                                                         if c < cols then solution[r,c+1] in {ew,nw,sw} endif);
 
 /*
   Find a path that satisfies the constraints
 */
-solve :: int_search(pathrc,input_order,indomain_max) satisfy;
+solve satisfy;
 
 % The remainder concerns output of a solution (in SVG)
 int: scale = 10;

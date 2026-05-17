@@ -1,0 +1,10 @@
+flights = [(preferred:420,earliest:415,latest:425,rwy:{1,2}),
+           (preferred:422,earliest:420,latest:425,rwy:{1,2}),
+           (preferred:430,earliest:420,latest:440,rwy:{1,2}),
+           (preferred:425,earliest:424,latest:430,rwy:{1,2}),
+           (preferred:440,earliest:430,latest:445,rwy:{1,2}),
+           (preferred:426,earliest:424,latest:428,rwy:{2}),
+           (preferred:435,earliest:430,latest:440,rwy:{1})
+          ];
+config = (start:420, end:440, rate:[8,4]);
+filter = 0;

@@ -28,7 +28,7 @@ Constraints:
 Given these inputs and constraints:
 - Allocate a runway and take off time to as many flights as possible such that the constraints are satisfied. Flights should be allocated a slot as close as possible to their preferred takeoff time.
 
-There are three variants of the model.
+There are four variants of the model, exploring different approaches.
 
 ## Model 1
 [tmi1.mzn](tmi1.mzn) is a standalone  model that takes input from a MiniZinc data file and employs strings and enum to aid comprehension of the model and data. A formatted solution is output.
@@ -53,31 +53,31 @@ where \<n> is a digit corresponding to one of the folders in [data](data) (e.g. 
 
 The output is pretty printed by Python.
 
-Data files [tmi2-1.dzn](data/tmi2-1.dzn) and [tmi2-2.dzn](data/tmi2-2.dzn) are example inputs that can be run from the command line or IDE, hence are equivalent to the data _tmi2.py_ generates and feeds to the [MiniZinc Python](https://pypi.org/project/minizinc/) interface.
+Data files [tmi2-1.dzn](data/tmi2-1.dzn) and [tmi2-2.dzn](data/tmi2-2.dzn) are example inputs that can be run from the command line or IDE, hence are equivalent to the data [tmi2.mzn](tmi2.mzn) generates and feeds to the [MiniZinc Python](https://pypi.org/project/minizinc/) interface.
 
 Example output for [tmi3](data/tmi3):
 ```
 TMI Schedule for YSSY on 2026-03-25
 Commences: 08:00, Ends: 08:30
-  ANZ248  : 08:00 - 16L
-  TMN21   : 08:01 - 16R
-  QFA477  : 08:04 - 16R
-  JST611  : 08:04 - 16L
-  JST822  : 08:07 - 16R
-  QFA139  : 08:08 - 16L
-  VOZ882  : 08:10 - 16R
-  RXA6783 : 08:12 - 16L
-  VOZ981  : 08:13 - 16R
-  ANZ224  : 08:16 - 16L
-  QLK34D  : 08:16 - 16R
-  QLK227D : 08:19 - 16R
-  VOZ973  : 08:20 - 16L
-  QFA487  : 08:22 - 16R
-  QLK209D : 08:24 - 16L
+  ANZ248  : 08:02 - 16L
+  TMN21   : 08:02 - 16R
+  JST611  : 08:05 - 16R
+  JST822  : 08:06 - 16L
+  QFA139  : 08:08 - 16R
+  VOZ882  : 08:10 - 16L
+  RXA6783 : 08:11 - 16R
+  VOZ981  : 08:14 - 16R
+  QLK34D  : 08:14 - 16L
+  ANZ224  : 08:17 - 16R
+  QLK227D : 08:18 - 16L
+  VOZ973  : 08:20 - 16R
+  QFA487  : 08:22 - 16L
+  QLK209D : 08:23 - 16R
   VOZ670  : 08:26 - 16R
   QLK166D : 08:28 - 16L
   QLK108D : 08:30 - 16R
 Excluded:
+  QFA477
   QFA485
 Cost: 13
 ```
@@ -89,7 +89,7 @@ python3 tmi3.py <n>
 ```
 The output is pretty-printed by Python.
 
-Data files [tmi3-1.dzn](data/tmi3-1.dzn) and [tmi3-2.dzn](data/tmi3-2.dzn) are example inputs that can be run from the command line or IDE, hence are equivalent to the data _tmi3.py_ generates and feeds to the [MiniZinc Python](https://pypi.org/project/minizinc/) interface. In particular, these files demonstrate how the table of candidates is constructed.
+Data files [tmi3-1.dzn](data/tmi3-1.dzn) and [tmi3-2.dzn](data/tmi3-2.dzn) are example inputs that can be run from the command line or IDE, hence are equivalent to the data [tmi3.mzn](tmi3.mzn) generates and feeds to the [MiniZinc Python](https://pypi.org/project/minizinc/) interface. In particular, these files demonstrate how the table of candidates is constructed.
 
 Example output for [tmi6](data/tmi6):
 ```
@@ -99,48 +99,54 @@ Runway: 16L
   TMN21   : 08:01
   JST822  : 08:07
   VOZ981  : 08:13
-  QLK227D : 08:19
+  QLK34D  : 08:19
 Runway: 16R
   ANZ248  : 08:00
   JST611  : 08:04
   QFA139  : 08:08
   VOZ882  : 08:12
-  QLK34D  : 08:16
+  QLK227D : 08:16
   VOZ973  : 08:20
 Excluded:
   QFA477
   RXA6783
   ANZ224
-Cost: 29
+Cost: 32
 ```
-All models calculate optimal solutions, but complexity is exponential so solution time quickly becomes impractial. Each flight specifies a takeoff window during which it is willing to depart. The narrower the window, the quicker the solution time as less searching needs to occur. _tmi3.py_ allows an extra parameter, such as:
+All models calculate optimal solutions, but complexity is exponential so solution time quickly becomes impractial. Each flight specifies a takeoff window during which it is willing to depart. The narrower the window, the quicker the solution time as less searching needs to occur. [tmi3.mzn](tmi3.mzn) allows an extra parameter, such as:
 ```
 python3 tmi3.py <n> 50
 ```
-which means run the model with the input data but reduce the size of the takeoff window by 50% with respect to the input file. There is a consequent decrease in the table of candidates, and hence solution time. However, while the model will calculate the optimal solution for the data it is given, the pre-processing of the input data means a sub-optimal solution with respect to the original data may result. The higher the value, the more likely the solutuion is sub-optimal. A value of 0 means no reduction (equivalent to omitting the argument); a value of 100 means a flight can only be allocated its preferred time.
+which means run the model with the input data but reduce the size of the takeoff window by 50% with respect to the input file. There is a consequent decrease in the table of candidates, and hence solution time. However, while the model will calculate the optimal solution for the data it is given, the pre-processing of the input data means a sub-optimal solution with respect to the original data may result. The higher the value, the more likely the solution is sub-optimal. A value of 0 means no reduction (equivalent to omitting the argument); a value of 100 means a flight can only be allocated its preferred time.
+
+## Model 4
+
+[tmi4.mzn](tmi4.mzn) takes the same approach as [tmi3.mzn](tmi3.mzn) but in this case the generation (and reduction) of the candidate table of is carried out by MiniZinc rather than Python.
+
+Like Model 3, Model 4 allows an extra parameter to reduce the size of the takeoff windows.
 
 ## Performance Comparison
 
-The table below is a performance comparison of models 2 and 3 using data sets 3 through 6. Times are _minutes:seconds_. All models run with the Chuffed solver.
+The table below is a performance comparison of models 2, 3 and 4 using data sets 3 through 6. All times are for the Chuffed solver in _minutes:seconds_. Running on a M2 MacBook Air with 24GB RAM.
 
-|Data Set |Model 2|Model 3|
-|---------|-------|-------|
-|3|00:10|00:06|
-|4|00:35|00:15|
-|5|52:26|06:52|
-|6|00:07|00:06|
+|Data Set |Model 2|Model 3|Model 4|
+|---------|-------|-------|-------|
+|3|00:08|00:06|00:05|
+|4|00:15|00:19|00:16|
+|5|15:11|03:41|03:00|
+|6|31:37|14:45|16:23|
 
-The benefit of Model 3 over Model 2 proportionally increases as the data size increase, though it is still exponential.
-
-The table below is a performance comparison of model 3 with different window reduction values.
+The table below is a performance comparison of model 4 with different window reduction values on data set 6.
 
 |Reduction|Time|Cost|
-|---------|----|----|
-|50|04:37|18|
-|60|01:36|18|
-|70|00:24|18|
-|80|00:11|19|
-|90|00:08|28|
-|100|00:04|55|
+|---------|-------|-------|
+|0%|16:23|19|
+|40%|12:04|21|
+|50%|03:34|22|
+|60%|02:32|22||
+|70%|01:47|26||
+|80%|00:59|37|
+|90%|00:10|55|
+|100%|00:07|104|
 
-The results clearly demonstrate the effect the window size has on performance. Note also that the optimal solution is still produced up to a reduction of 70%, after which the cost increases.
+The results clearly demonstrate the effect the window size has on performance and quality of solution.

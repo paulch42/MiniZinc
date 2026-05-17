@@ -2,9 +2,15 @@
     "openFiles": [
         "tmi1.mzn",
         "tmi2.mzn",
-        "tmi3.mzn"
+        "tmi3.mzn",
+        "tmi4.mzn",
+        "data/tmi3-2.dzn",
+        "data/tmi4-1.dzn",
+        "data/tmi3-1.dzn",
+        "data/tmi4-2.dzn",
+        "data/tmi2-2.dzn"
     ],
-    "openTab": 2,
+    "openTab": 3,
     "projectFiles": [
         "data/tmi1-1.dzn",
         "data/tmi1-2.dzn",
@@ -12,11 +18,14 @@
         "data/tmi2-2.dzn",
         "data/tmi3-1.dzn",
         "data/tmi3-2.dzn",
+        "data/tmi4-1.dzn",
+        "data/tmi4-2.dzn",
         "tmi1.mzn",
         "tmi2.mzn",
-        "tmi3.mzn"
+        "tmi3.mzn",
+        "tmi4.mzn"
     ],
-    "selectedBuiltinConfigId": "org.gecode.gecode",
-    "selectedBuiltinConfigVersion": "6.3.0",
+    "selectedBuiltinConfigId": "org.chuffed.chuffed",
+    "selectedBuiltinConfigVersion": "0.13.2",
     "version": 106
 }

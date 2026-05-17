@@ -1,20 +1,15 @@
 {
     "openFiles": [
-        "train-tracks.mzn",
-        "train-tracks-161.dzn",
-        "train-tracks-1.dzn",
-        "train-tracks-140.dzn",
-        "train-tracks-31.dzn",
-        "train-tracks-8-9.dzn",
-        "train-tracks-11-12.dzn"
+        "train-tracks.mzn"
     ],
-    "openTab": 1,
+    "openTab": 0,
     "projectFiles": [
-        "train-tracks-1.dzn",
+        "train-tracks-10-10.dzn",
         "train-tracks-11-12.dzn",
-        "train-tracks-140.dzn",
-        "train-tracks-161.dzn",
-        "train-tracks-31.dzn",
+        "train-tracks-16-16.dzn",
+        "train-tracks-6-6.dzn",
+        "train-tracks-8-8.dzn",
+        "train-tracks-8-8b.dzn",
         "train-tracks-8-9.dzn",
         "train-tracks.mzn"
     ],

@@ -1,4 +1,4 @@
-% Run with Chuffed solver for best performance
+% Run with Chuffed or Huub solver for best performance
 include "globals.mzn";
   
 /*
