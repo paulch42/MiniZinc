@@ -1,0 +1,21 @@
+{
+    "teams": [
+        "aberdeen",
+        "celtic",
+        "dundee",
+        "dundee united",
+        "falkirk",
+        "hearts",
+        "hibernian",
+        "kilmarnock",
+        "livingston",
+        "motherwell",
+        "rangers"
+    ],
+    "co_home": [
+        [
+            "celtic",
+            "rangers"
+        ]
+    ]
+}

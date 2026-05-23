@@ -5,3 +5,4 @@ This folder conatins three models I created while learning MiniZinc.
 |[TMI](TMI)|Simple resource management in the Aviation industry.|
 |[train-tracks](train-tracks)|Solution of a popular puzzle to lay train track pieces on a grid.|
 |[castle-puzzle](castle-puzzle)|Fit various shaped pieces to cover a grid.|
+|[league](league)|Schedule the matches for a league table.|
