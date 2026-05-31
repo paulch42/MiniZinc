@@ -1,0 +1,15 @@
+{
+    "openFiles": [
+        "battleships.mzn"
+    ],
+    "openTab": 0,
+    "projectFiles": [
+        "battleships.mzn",
+        "battleships_12_12.dzn",
+        "battleships_7_7.dzn",
+        "battleships_9_9.dzn"
+    ],
+    "selectedBuiltinConfigId": "org.chuffed.chuffed",
+    "selectedBuiltinConfigVersion": "0.13.2",
+    "version": 106
+}

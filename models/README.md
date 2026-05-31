@@ -6,3 +6,5 @@ This folder conatins three models I created while learning MiniZinc.
 |[train-tracks](train-tracks)|Solution of a popular puzzle to lay train track pieces on a grid.|
 |[castle-puzzle](castle-puzzle)|Fit various shaped pieces to cover a grid.|
 |[league](league)|Schedule the matches for a league table.|
+|[minesweeper](minesweeper)|Solution of the minesweeper puzzle.|
+|[battleships](battleships)|Solution of the battelships puzzle.|

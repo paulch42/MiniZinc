@@ -52,7 +52,7 @@ array[ROFFX,1..2] of int: roff = array2d(ROFFX, 1..2, [rofx[i,j] | i in ROFFX, j
 array[BLOCKX] of var 0..width: x;
 array[BLOCKX] of var 0..height: y;
 
-% x/y co-ordiante of left/bottom of each block in form suitable for geost_bb
+% x/y co-ordinate of left/bottom of each block in form suitable for geost_bb
 array[BLOCKX,1..2] of var int: coord;
 
 % rotational variation of a block
