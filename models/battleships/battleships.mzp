@@ -1,15 +1,19 @@
 {
     "openFiles": [
-        "battleships.mzn"
+        "battleships.mzn",
+        "battleships_9_9.dzn",
+        "battleships_7_7.dzn",
+        "battleships_15_15.dzn"
     ],
     "openTab": 0,
     "projectFiles": [
         "battleships.mzn",
         "battleships_12_12.dzn",
+        "battleships_15_15.dzn",
         "battleships_7_7.dzn",
         "battleships_9_9.dzn"
     ],
-    "selectedBuiltinConfigId": "org.chuffed.chuffed",
-    "selectedBuiltinConfigVersion": "0.13.2",
+    "selectedBuiltinConfigId": "solutions.huub",
+    "selectedBuiltinConfigVersion": "100.0.0",
     "version": 106
 }
