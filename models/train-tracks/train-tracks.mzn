@@ -1,5 +1,5 @@
-% Run with Chuffed or Huub solver for best performance
 include "globals.mzn";
+include "ide/vis.mzn";
 
 /*
   Parameters
@@ -73,6 +73,9 @@ constraint forall(p in PATH)(pathrc[p] = (pathr[p]-1) * cols + pathc[p]);
 % channel 'pathr/c' and 'solution'
 constraint forall(p in PATH)(occurs(solution[pathr[p],pathc[p]]));
 
+% fix the start point
+constraint pathr[1] = start[1] /\ pathc[1] = start[2];
+
 % the fixed pieces in the initial configuration must be retained
 constraint forall(p in fixed)(solution[p.1,p.2] = p.3);
 
@@ -121,8 +124,5 @@ constraint forall(r in ROW, c in COL where solution[r,c] = ne)((r=1 \/ c=cols ->
 */
 solve satisfy;
 
-% The remainder concerns output of a solution (in SVG)
-int: scale = 10;
-output "<svg width=\"\((cols+1)*scale)\" height=\"\((rows+1)*scale)\">\n";
-output ["<polyline style=\"fill:none;stroke:red\" points=\""] ++ [ "\(pathc[p]*scale),\(pathr[p]*scale) " | p in PATH] ++ ["\"/>"];
-output "</svg>\n";
+% Output the solution
+output vis_line(pathc,[rows-p+1 | p in pathr],"","");
