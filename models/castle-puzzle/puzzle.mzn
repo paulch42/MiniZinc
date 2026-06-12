@@ -1,6 +1,6 @@
-% Run with Chuffed or Huub solver for best performance
 include "globals.mzn";
-  
+include "ide/vis.mzn";
+
 /*
   Parameters
 */
@@ -48,7 +48,7 @@ array[ROFFX,1..2] of int: roff = array2d(ROFFX, 1..2, [rofx[i,j] | i in ROFFX, j
   Decision variables
 */
 
-% x/y co-ordiante of left/bottom of each block (including forbidden block)
+% x/y co-ordinate of left/bottom of each block (including forbidden block)
 array[BLOCKX] of var 0..width: x;
 array[BLOCKX] of var 0..height: y;
 
@@ -77,16 +77,5 @@ constraint geost_bb(2, rsize, roff, shapex, coord, kind, [0,0], [width, height])
 % solve satisfy;
 solve :: int_search(coord,first_fail,indomain_max) satisfy;
 
-% The remainder concerns output of a solution (in SVG)
-array[BLOCKX] of string: colour = ["red", "green", "blue", "aqua", "black", "violet", "slategrey", "saddlebrown", "olivedrab", "lightyellow"];
-constraint length(colour) > n;
-
-function string: draw_block(int: num, var int: xo, var int: yo, var set of ROFFX: rect) = concat([draw_rect(num,xo,yo,ro) | ro in fix(rect)]);
-
-function string: draw_rect(int: num, var int: xo, var int: yo, var  ROFFX: ro) =
-    "<rect style=\"fill:" ++ colour[num] ++ "\" width=\"\(rofx[ro,3])\" height=\"\(rofx[ro,4])\" x=\"\(xo+rofx[ro,1])\" y=\"\(yo+rofx[ro,2])\"/>";
-
-int: scale = 10;
-output "<svg width=\"\(width*scale)\" height=\"\(height*scale)\"><g transform=\"scale(\(scale))\">\n";
-output [draw_block(b,coord[b,1],coord[b,2],shapex[kind[b]]) ++ "\n" | b in BLOCKX];
-output "</g></svg>";
+% visualise the solution
+output vis_geost_2d(rsize, roff, shapex, coord, kind);
