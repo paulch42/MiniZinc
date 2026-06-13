@@ -47,6 +47,7 @@ def fmt_list(lst, sep=',', at_start=False):
     Args:
         lst: list of terms
         sep (optional): separator
+        at_start (optional): insert the separator before the list?
 
     Returns:
         str: the formatted list
