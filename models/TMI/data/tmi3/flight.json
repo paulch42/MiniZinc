@@ -8,7 +8,8 @@
             "34R",
             "16L",
             "16R"
-        ]
+        ],
+        "priority": true
     },
     "TMN21": {
         "preferred": "08:02",
@@ -85,7 +86,8 @@
             "34R",
             "16L",
             "16R"
-        ]
+        ],
+        "priority": true
     },
     "VOZ981": {
         "preferred": "08:13",
@@ -96,7 +98,8 @@
             "34R",
             "16L",
             "16R"
-        ]
+        ],
+        "priority": true
     },
     "QLK227D": {
         "preferred": "08:17",

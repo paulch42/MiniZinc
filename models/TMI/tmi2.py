@@ -21,6 +21,7 @@ def encode_flt(id,flt):
         flt['earliest'] = encode_time(time.fromisoformat(flt['earliest']))
         flt['latest'] = encode_time(time.fromisoformat(flt['latest']))
         flt['rwy'] = {runways.index(r)+1 for r in flt['rwy']}
+        flt['priority'] = flt.get('priority',False)
     except Exception as e:
         print(f'Invalid data for "{id}"')
         raise e

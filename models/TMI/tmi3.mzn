@@ -1,4 +1,3 @@
-% Run with Chuffed or Huub solver for best performance.
 % The model gets very expensive very quickly as the data size grows.
 
 include "globals.mzn";
@@ -41,12 +40,11 @@ type flight_info = record(
 list of flight_info: flights;
 set of int: FLIGHT = 1..length(flights);
 
-% All possible flight runway/takeoff times for all all flights.
-array[int,1..3] of int: candidates;
-%int: num_candidates = length([1|f in FLIGHT, r in flights[f].rwy, t in overlap(f)]) + card(FLIGHT);
+% The interval a flight's takeoff window overlaps the TMI period (derived).
+array[FLIGHT] of set of TMI_TIME: overlap = [max(config.start,flights[f].earliest)..min(config.end,flights[f].latest) | f in FLIGHT];
 
-% The period of time a flight's takeoff window overlaps the TMI period.
-function int: overlap(FLIGHT: f) = card(flights[f].earliest..flights[f].latest intersect TMI_TIME);
+% All possible flight runway/takeoff times for all flights.
+array[int,1..3] of int: candidates;
 
 /*
   Validate the input data.
@@ -57,7 +55,7 @@ constraint forall(f in FLIGHT)
                  (let {flight_info: fi = flights[f] }
                   in assert(fi.preferred in fi.earliest..fi.latest,
                             "Preferred time (\(fi.preferred)) is not in window for flight '\(f)'")
-                  /\ assert(overlap(f) > 0,
+                  /\ assert(overlap[f] != {},
                             "Window for flight '\(f)' does not overlap TMI period"));
 
 % 'candidates' table is consistent.
@@ -94,6 +92,11 @@ constraint forall(f in FLIGHT)(schedule[f,1] = f /\ table(schedule[f,1..3],candi
 constraint forall(f, g in FLIGHT where f < g /\ schedule[f,2] != -1 /\ schedule[f,2] = schedule[g,2])
                  (abs(schedule[f,3]-schedule[g,3]) >= config.rate[schedule[f,2]]);
 
+% The construction of the 'candidates' table ensures:
+% - A flight is allocated a runway it is able to use.
+% - The time allocated to a flight falls within its takeoff window and the TMI period.
+% - A priority flight is allocated a slot.
+
 /*
   Objective
 */
@@ -103,7 +106,7 @@ constraint forall(f, g in FLIGHT where f < g /\ schedule[f,2] != -1 /\ schedule[
 % - if not allocated a slot, the overlap between the flight's takeoff window and the TMI period.
 var int: cost;
 constraint cost = sum(f in FLIGHT)(if schedule[f,2] = -1
-                                   then overlap(f)
+                                   then card(overlap[f])
                                    else abs(flights[f].preferred - schedule[f,3])
                                    endif);
 

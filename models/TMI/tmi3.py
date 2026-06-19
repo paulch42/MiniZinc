@@ -21,6 +21,7 @@ def encode_flt(id,flt):
         flt['earliest'] = encode_time(time.fromisoformat(flt['earliest']))
         flt['latest'] = encode_time(time.fromisoformat(flt['latest']))
         flt['rwy'] = {active_rwy.index(r)+1 for r in flt['rwy'] if r in active_rwy}
+        flt['priority'] = flt.get('priority',False)
     except Exception as e:
         print(f'Invalid data for "{id}"')
         raise e
@@ -71,7 +72,9 @@ for i,f in enumerate(flights):
             upper -= round((upper-mid)*narrow/100)
         for t in range(lower,upper+1):
             candidates.append([i+1,r,t])
-    candidates.append([i+1,-1,-1])
+    if not f['priority']:
+        candidates.append([i+1,-1,-1])
+    del f['priority']
 
 # initialise the input data and run the solver
 model = Model('./tmi3.mzn')

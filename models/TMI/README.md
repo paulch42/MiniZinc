@@ -18,6 +18,8 @@ Constraints:
   - The time the aircraft operator would ideally like their flight to depart.
 - Each flight must take off in a nominated time window.
   - Aircraft operators have schedules to meet; the allocated take off time must not be too far from the scheduled time.
+- A flight flagged as priority must be allocated a slot.
+  - Medical flights, head of state, etc.
 - Only certain runways are available.
   - The configuration of resources dictates which of the runways at an airport are available for use.
 - Each runway has a maximum rate at which departures can occur.
@@ -126,6 +128,8 @@ which means run the model with the input data but reduce the size of the takeoff
 Like Model 3, Model 4 allows an extra parameter to reduce the size of the takeoff windows.
 
 ## Performance Comparison
+
+Note: The following tests were performed with earlier versions of the models and need to be re-run.
 
 The table below is a performance comparison of models 2, 3 and 4 using data sets 3 through 6. All times are for the Chuffed solver in _minutes:seconds_. Running on a M2 MacBook Air with 24GB RAM.
 

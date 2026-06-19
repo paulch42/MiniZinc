@@ -151,7 +151,8 @@
             "34R",
             "16L",
             "16R"
-        ]
+        ],
+        "priority": true
     },
     "QFA487": {
         "preferred": "08:22",

@@ -1,4 +1,3 @@
-% Run with Chuffed or Huub solver for best performance.
 % The model gets very expensive very quickly as the data size grows.
 
 include "globals.mzn";
@@ -39,7 +38,8 @@ type flight_info = record(
                        TIME: preferred,    % preferred takeoff time
                        TIME: earliest,     % earliest possible takeoff time
                        TIME: latest,       % latest possible takeoff time
-                       set of RUNWAY: rwy  % available runways the flight can use
+                       set of RUNWAY: rwy, % available runways the flight can use
+                       0..1: priority      % is it a priority flight?
                    );
 
 % The flights participating in the TMI. Each flight is represented by a unique integer.
@@ -53,20 +53,20 @@ array[FLIGHT] of tuple(TIME,TIME): window =
            flt.latest-round((flt.latest-pref)*filter/100))
      | f in FLIGHT];
 
-% The period of time a flight's (possibly reduced) takeoff window overlaps the TMI period.
-function set of TMI_TIME: overlap(FLIGHT: f) =
-     max(config.start,window[f].1)..min(config.end,window[f].2);
+% The interval a flight's (possibly reduced) takeoff window overlaps the TMI period (derived).
+array[FLIGHT] of set of TMI_TIME: overlap = [max(config.start,window[f].1)..min(config.end,window[f].2) | f in FLIGHT];
 
-% Number of candidates for slot allocation, including empty slot if flight excluded.
-int: num_candidates = length([1|f in FLIGHT, r in flights[f].rwy, t in overlap(f)]) + card(FLIGHT);
+% Number of candidates for slot allocation, allowing empty designator for non-priority flights.
+int: num_candidates = length([1|f in FLIGHT, r in flights[f].rwy, t in overlap[f]]) +
+                      card({f | f in FLIGHT where flights[f].priority = 0});
 set of int: CANDIDATE = 1..num_candidates;
 
 % All possible flight runway/takeoff times entailed by the input parameters.
 array[CANDIDATE,1..3] of int: candidates =
      array2d(CANDIDATE, 1..3,
              [ [f,r,t][col]
-             | f in FLIGHT, r in flights[f].rwy, t in overlap(f), col in 1..3]
-             ++ [[f,-1,-1][col] | f in FLIGHT, col in 1..3]);
+             | f in FLIGHT, r in flights[f].rwy, t in overlap[f], col in 1..3]
+             ++ [[f,-1,-1][col] | f in FLIGHT where flights[f].priority = 0, col in 1..3]);
 
 /*
   Validate the input data.
@@ -77,7 +77,7 @@ constraint forall(f in FLIGHT)
                  (let {flight_info: fi = flights[f] }
                   in assert(fi.preferred in fi.earliest..fi.latest,
                             "Preferred time (\(fi.preferred)) is not in window for flight '\(f)'")
-                  /\ assert(overlap(f) != {},
+                  /\ assert(overlap[f] != {},
                             "Window for flight '\(f)' does not overlap TMI period"));
 
 /*
@@ -103,6 +103,11 @@ constraint forall(f in FLIGHT)(schedule[f,1] = f /\ table(schedule[f,1..3],candi
 constraint forall(r in RUNWAY, f, g in runway_allocation[r] where f < g)
                  (abs(schedule[f,3]-schedule[g,3]) >= config.rate[schedule[f,2]]);
 
+% The construction of the 'candidates' table ensures:
+% - A flight is allocated a runway it is able to use.
+% - The time allocated to a flight falls within its takeoff window and the TMI period.
+% - A priority flight is allocated a slot.
+
 /*
   Objective
 */
@@ -113,7 +118,7 @@ constraint forall(r in RUNWAY, f, g in runway_allocation[r] where f < g)
 % - if not allocated a slot, the overlap between the flight's takeoff window and the TMI period.
 var int: cost;
 constraint cost = sum(f in FLIGHT)(if schedule[f,2] = -1
-                                   then card(overlap(f))
+                                   then card(overlap[f])
                                    else abs(flights[f].preferred - schedule[f,3])
                                    endif);
 

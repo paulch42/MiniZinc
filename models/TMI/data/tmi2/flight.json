@@ -52,14 +52,15 @@
         ]
     },
     "RXA1": {
-        "preferred": "0706",
+        "preferred": "07:06",
         "earliest": "07:04",
         "latest": "07:08",
         "rwy": [
             "34R",
             "25",
             "07"
-        ]
+        ],
+        "priority": true
     },
     "JST12": {
         "preferred": "07:15",
@@ -67,6 +68,16 @@
         "latest": "07:20",
         "rwy": [
             "34L",
+            "25",
+            "07"
+        ]
+    },
+    "BAW1": {
+        "preferred": "07:11",
+        "earliest": "07:11",
+        "latest": "07:15",
+        "rwy": [
+            "34R",
             "25",
             "07"
         ]

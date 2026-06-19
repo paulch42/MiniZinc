@@ -1,4 +1,3 @@
-% Run with Chuffed or Huub solver for best performance.
 % The model gets very expensive very quickly as the data size grows.
 
 /*
@@ -40,13 +39,17 @@ type flight = record(
                   TIME: preferred,    % preferred takeoff time
                   TIME: earliest,     % earliest possible takeoff time
                   TIME: latest,       % latest possible takeoff time
-                  set of RUNWAY: rwy  % runways the flight is able to use
+                  set of RUNWAY: rwy, % runways the flight is able to use
+                  0..1: priority      % is it a priority flight?
               );
 
 % The flights participating in the TMI. Each flight is represented by a unique integer.
 list of flight: flights;
 set of int: FLIGHT = 1..length(flights);
- 
+
+% The interval a flight's takeoff window overlaps the TMI period (derived).
+array[FLIGHT] of set of TMI_TIME: overlap = [max(config.start,flights[f].earliest)..min(config.end,flights[f].latest) | f in FLIGHT];
+
 /*
   Validate the input data.
 */
@@ -59,7 +62,6 @@ constraint forall(f in FLIGHT)(assert(flights[f].rwy intersect available != {},
                                       "Flight \(f) cannot use any of the available runways (\(available))"));
 
 % The preferred takeoff time for a flight must be in its takeoff window.
-% constraint forall(f in FLIGHT)(assert(flights[f].earliest <= flights[f].preferred /\ flights[f].preferred <= flights[f].latest,
 constraint forall(f in FLIGHT)(assert(flights[f].preferred in flights[f].earliest..flights[f].latest,
                                       "Flight \(f): preferred time (\(flights[f].preferred)) in not in " ++
                                       "takeoff window (\(flights[f].earliest)..\(flights[f].latest))"));
@@ -96,26 +98,23 @@ constraint forall(f, g in allocated where f < g /\ rwy[f] = rwy[g])(abs(slot[f]-
 constraint forall(f in allocated)(rwy[f] in flights[f].rwy);
 
 % 'slot' and 'rwy' are both undefined if flight not allocated a slot.
-constraint forall(f in FLIGHT)(absent(slot[f]) <-> absent(rwy[f]));
+constraint forall(f in excluded)(absent(slot[f]) /\ absent(rwy[f]));
 
-% The time allocated to a flight must fall within its takeoff window.
-constraint forall(f in allocated)(slot[f] in flights[f].earliest..flights[f].latest);
+% The time allocated to a flight must fall within its takeoff window and the TMI period.
+constraint forall(f in allocated)(slot[f] in overlap[f]);
 
-% The time allocated to a flight must fall within the TMI period.
-% Explicit constraint not required; handled by restricting codomain of 'slot' to TMI_TIME.
+% Priority flights must be allocated a slot.
+constraint { f | f in FLIGHT where flights[f].priority = 1 } subset allocated;
 
 /*
   Objective
 */
 
-% The length of time a flight's takeoff window overlaps the TMI period.
-function var int: overlap(FLIGHT: f) = min(config.end,flights[f].latest) - max(config.start,flights[f].earliest);
-
 % The cost of a TMI is the sum of:
 % - for each flight allocated a slot, the difference between its preferred time and allocated time;
 % - for a flight not allocated a slot, the overlap between the flight's takeoff window and the TMI period.
 var int: cost;
-constraint cost = sum(f in allocated)(abs(flights[f].preferred - slot[f])) + sum(f in excluded)(overlap(f));
+constraint cost = sum(f in allocated)(abs(flights[f].preferred - slot[f])) + sum(f in excluded)(card(overlap[f]));
 
 % The goal is to minimize the cost of the TMI.
 solve minimize cost;

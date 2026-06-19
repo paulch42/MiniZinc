@@ -3,10 +3,11 @@ flights = [(preferred:420,earliest:415,latest:425),
            (preferred:430,earliest:420,latest:440),
            (preferred:425,earliest:424,latest:430),
            (preferred:440,earliest:430,latest:445),
-           (preferred:426,earliest:424,latest:428),
-           (preferred:435,earliest:430,latest:440)
+           (preferred:426,earliest:424,latest:428,),
+           (preferred:435,earliest:430,latest:440),
+           (preferred:431,earliest:430,latest:435)
           ];
-config = (start:420, end:440, rate:[8,4]);
+config = (start:420,end:440,rate:[8,5]);
 candidates = [|
 1, 1, 420 |
 1, 1, 421 |
@@ -120,7 +121,7 @@ candidates = [|
 6, 2, 426 |
 6, 2, 427 |
 6, 2, 428 |
-6, -1, -1 |
+%6, -1, -1 | Omit as RXA1 is a priority flight.
 7, 1, 430 |
 7, 1, 431 |
 7, 1, 432 |
@@ -133,4 +134,11 @@ candidates = [|
 7, 1, 439 |
 7, 1, 440 |
 7, -1, -1 |
+8, 2, 430 |
+8, 2, 431 |
+8, 2, 432 |
+8, 2, 433 |
+8, 2, 434 |
+8, 2, 435 |
+8, -1, -1 |
 |];
