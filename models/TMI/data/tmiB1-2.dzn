@@ -3,7 +3,7 @@ flights = [(preferred:420,earliest:415,latest:425),
            (preferred:430,earliest:420,latest:440),
            (preferred:425,earliest:424,latest:430),
            (preferred:440,earliest:430,latest:445),
-           (preferred:426,earliest:424,latest:428,),
+           (preferred:426,earliest:424,latest:428),
            (preferred:435,earliest:430,latest:440),
            (preferred:431,earliest:430,latest:435)
           ];

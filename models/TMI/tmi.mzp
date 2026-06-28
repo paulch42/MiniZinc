@@ -1,31 +1,28 @@
 {
     "openFiles": [
-        "tmi1.mzn",
-        "tmi2.mzn",
-        "tmi3.mzn",
-        "tmi4.mzn",
-        "data/tmi3-2.dzn",
-        "data/tmi4-1.dzn",
-        "data/tmi3-1.dzn",
-        "data/tmi4-2.dzn",
-        "data/tmi2-2.dzn"
+        "tmi6.mzn"
     ],
-    "openTab": 3,
+    "openTab": 0,
     "projectFiles": [
-        "data/tmi1-1.dzn",
-        "data/tmi1-2.dzn",
-        "data/tmi2-1.dzn",
-        "data/tmi2-2.dzn",
-        "data/tmi3-1.dzn",
-        "data/tmi3-2.dzn",
-        "data/tmi4-1.dzn",
-        "data/tmi4-2.dzn",
-        "tmi1.mzn",
-        "tmi2.mzn",
-        "tmi3.mzn",
-        "tmi4.mzn"
+        "data/tmi5.dzn",
+        "data/tmiA1-1.dzn",
+        "data/tmiA1-2.dzn",
+        "data/tmiA2-1.dzn",
+        "data/tmiA2-2.dzn",
+        "data/tmiB1-1.dzn",
+        "data/tmiB1-2.dzn",
+        "data/tmiB2-1.dzn",
+        "data/tmiB2-2.dzn",
+        "data/tmiC-1.dzn",
+        "data/tmiC-2.dzn",
+        "tmi6.mzn",
+        "tmiA1.mzn",
+        "tmiA2.mzn",
+        "tmiB1.mzn",
+        "tmiB2.mzn",
+        "tmiC.mzn"
     ],
-    "selectedBuiltinConfigId": "org.chuffed.chuffed",
-    "selectedBuiltinConfigVersion": "0.13.2",
+    "selectedBuiltinConfigId": "solutions.huub",
+    "selectedBuiltinConfigVersion": "100.0.0",
     "version": 106
 }

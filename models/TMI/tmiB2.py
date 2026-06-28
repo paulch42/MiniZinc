@@ -63,7 +63,7 @@ fids = list(flight.keys())
 flights = [encode_flt(key,value) for key,value in flight.items()]
 
 # initialise the input data and run the solver
-model = Model('./tmi4.mzn')
+model = Model('./tmiB2.mzn')
 solver = Solver.lookup('chuffed')
 instance = Instance(solver, model)
 instance["config"] = config

@@ -77,7 +77,7 @@ for i,f in enumerate(flights):
     del f['priority']
 
 # initialise the input data and run the solver
-model = Model('./tmi3.mzn')
+model = Model('./tmiB1.mzn')
 solver = Solver.lookup('chuffed')
 instance = Instance(solver, model)
 instance["num_runways"] = len(active_rwy)

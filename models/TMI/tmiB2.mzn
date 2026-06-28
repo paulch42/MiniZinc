@@ -56,6 +56,8 @@ array[FLIGHT] of tuple(TIME,TIME): window =
 % The interval a flight's (possibly reduced) takeoff window overlaps the TMI period (derived).
 array[FLIGHT] of set of TMI_TIME: overlap = [max(config.start,window[f].1)..min(config.end,window[f].2) | f in FLIGHT];
 
+array[FLIGHT] of set of TMI_TIME: base_overlap = [max(config.start,flights[f].earliest)..min(config.end,flights[f].latest) | f in FLIGHT];
+
 % Number of candidates for slot allocation, allowing empty designator for non-priority flights.
 int: num_candidates = length([1|f in FLIGHT, r in flights[f].rwy, t in overlap[f]]) +
                       card({f | f in FLIGHT where flights[f].priority = 0});
@@ -118,7 +120,7 @@ constraint forall(r in RUNWAY, f, g in runway_allocation[r] where f < g)
 % - if not allocated a slot, the overlap between the flight's takeoff window and the TMI period.
 var int: cost;
 constraint cost = sum(f in FLIGHT)(if schedule[f,2] = -1
-                                   then card(overlap[f])
+                                   then card(base_overlap[f])
                                    else abs(flights[f].preferred - schedule[f,3])
                                    endif);
 
