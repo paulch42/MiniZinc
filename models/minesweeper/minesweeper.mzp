@@ -4,12 +4,12 @@
     ],
     "openTab": 0,
     "projectFiles": [
-        "minesweeper.mzn",
-        "minesweeper_14_10.dzn",
-        "minesweeper_16_24.dzn",
-        "minesweeper_6_9.dzn"
+        "data/minesweeper_14_10.dzn",
+        "data/minesweeper_16_24.dzn",
+        "data/minesweeper_6_9.dzn",
+        "minesweeper.mzn"
     ],
-    "selectedBuiltinConfigId": "org.gecode.gecode",
-    "selectedBuiltinConfigVersion": "6.3.0",
+    "selectedBuiltinConfigId": "org.chuffed.chuffed",
+    "selectedBuiltinConfigVersion": "0.13.2",
     "version": 106
 }

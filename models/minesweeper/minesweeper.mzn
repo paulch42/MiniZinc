@@ -1,5 +1,3 @@
-% Run with Chuffed or Huub solver for best performance.
-
 /*
   Parameters
 */
@@ -50,32 +48,7 @@ constraint forall(r in ROW, c in COLUMN)(solution[r,c] != bomb <-> solution[r,c]
   Output
 */
 
-% ASCII text
 function string: output_row(array[int] of var CELL: row) =
     concat(i in index_set(row))(if fix(row[i]) = bomb then "*" else show(row[i]) endif);
 
 output [output_row(solution[r,COLUMN]) ++ "\n" | r in ROW];
-
-% SVG
-int: scale = 20;
-int: step = scale div 2;
-
-function string: draw_opt_cell(ROW: r, COLUMN: c, array[ROW,COLUMN] of opt CELL: grid) =
-  if absent(grid[r,c])
-  then ""
-  else draw_cell(r, c, deopt(grid[r,c]))
-  endif;
-
-function string: draw_cell(ROW: r, COLUMN: c, CELL: val) =
-  if val = bomb
-  then "<circle cx=\"\(c*scale-step)\" cy=\"\(r*scale-step)\" r=\"\(step-1)\" fill=\"blue\" />\n"
-  else "<text x=\((c-1)*scale+(scale div 4)) y=\(r*scale-(scale div 4)) font-family=\"arial\" font-size=\(scale)/>\(val)</text>\n"
-  endif;
-
-output "\n<svg width=\"\(columns*scale)\" height=\"\(rows*scale)\">\n";
-output [draw_opt_cell(r,c, initial) | r in ROW, c in COLUMN];
-output "</svg>";
-
-output "\n\n<svg width=\"\(columns*scale)\" height=\"\(rows*scale)\">\n";
-output [draw_cell(r,c, fix(solution[r,c])) | r in ROW, c in COLUMN];
-output "</svg>";
