@@ -75,7 +75,7 @@ array[FLIGHT,1..4] of var RANGE: schedule;
 constraint forall(f in FLIGHT)(schedule[f,2] = f /\ table(schedule[f,1..4],candidates));
 
 % No slot allocated to more than one flight.
-constraint all_different_except_0([schedule[f,1] | f in FLIGHT]);
+constraint all_different([schedule[f,1] | f in FLIGHT],{0});
 
 % The construction of the 'candidates' table ensures:
 % - A flight is allocated a runway it is able to use.
