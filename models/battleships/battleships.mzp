@@ -1,17 +1,14 @@
 {
     "openFiles": [
-        "battleships.mzn",
-        "battleships_9_9.dzn",
-        "battleships_7_7.dzn",
-        "battleships_15_15.dzn"
+        "battleships.mzn"
     ],
     "openTab": 0,
     "projectFiles": [
         "battleships.mzn",
-        "battleships_12_12.dzn",
-        "battleships_15_15.dzn",
-        "battleships_7_7.dzn",
-        "battleships_9_9.dzn"
+        "data/battleships_12_12.dzn",
+        "data/battleships_15_15.dzn",
+        "data/battleships_7_7.dzn",
+        "data/battleships_9_9.dzn"
     ],
     "selectedBuiltinConfigId": "solutions.huub",
     "selectedBuiltinConfigVersion": "100.0.0",

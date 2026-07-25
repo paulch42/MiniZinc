@@ -1,5 +1,3 @@
-% Run with Chuffed or Huub solver for best performance.
-
 include "globals.mzn";
 
 /*
@@ -34,17 +32,17 @@ set of int: SHIP = 1..num_ships;
 % The type of each ship.
 array[SHIP] of SHIP_TYPE: type_of = [t | t in SHIP_TYPE, _ in 1..ships_of_type[t]];
 
-% The different kinds of ship pieces that can be assigned to a cell.
-enum ShipPiece = {singleton,left,right,top,bottom,interior};
+% Cells can contain a ship piece or be empty.
+enum Cell = {singleton,left,right,top,bottom,interior,empty};
 
-% The orientation of a ship on the grid.
-enum Orientation = {vertical,horizontal};
+% ASCII representation of a cell; used to output solution.
+array[Cell] of string: cell_to_str = ["o","<",">","^","v","#"," "];
 
-% Cells can be ship pieces or empty.
-enum Cell = P(ShipPiece) ++ {empty};
+% The input configuration.
+array[ROW,COLUMN] of string: input_grid;
 
-% The initial configuration.
-array[ROW,COLUMN] of opt Cell: initial;
+% The initial configuration for the MiniZinc model: derived from 'input_grid'.
+array[ROW,COLUMN] of opt Cell: initial = array2d(ROW,COLUMN,[str_to_cell(input_grid[r,c]) | r in ROW, c in COLUMN]);
 
 % The number of ship pieces in each row and column.
 array[ROW] of int: num_in_row;
@@ -58,8 +56,8 @@ array[COLUMN] of int: num_in_column;
 array[SHIP] of var MAXRC: row_pos;
 array[SHIP] of var MAXRC: col_pos;
 
-% Orientation of a ship.
-array[SHIP] of var Orientation: orientation;
+% Orientation of a ship: 0=vertical, 1=horizontal.
+array[SHIP] of var 0..1: orientation;
 
 % The value assigned to each cell in the solution, including dummy row 0 and column 0.
 array[ROW0,COLUMN0] of var Cell: solution;
@@ -69,18 +67,24 @@ array[ROW0,COLUMN0] of var Cell: solution;
 */
 
 % The width of a ship in the grid: 1 if vertical, otherwise the length of the ship.
-function var MAXRC: width(SHIP: s) = if orientation[s] = vertical then 1 else type_of[s] endif;
+function var MAXRC: width(SHIP: s) = if orientation[s] = 0 then 1 else type_of[s] endif;
 
 % The height of a ship in the grid: 1 if horizontal, otherwise the length of the ship.
-function var MAXRC: height(SHIP: s) = if orientation[s] = vertical then type_of[s] else 1 endif;
+function var MAXRC: height(SHIP: s) = if orientation[s] = 0 then type_of[s] else 1 endif;
 
 % Constraints on a ship oriented vertically.
 predicate vertical(var ROW: r, var COLUMN: c, var MAXRC: size) =
-  solution[r,c] = P(top) /\ solution[r+size-1,c] = P(bottom) /\ forall(i in r+1..min(r+size-2,num_rows))(solution[i,c] = P(interior));
+  solution[r,c] = top /\ solution[r+size-1,c] = bottom /\ forall(i in r+1..min(r+size-2,num_rows))(solution[i,c] = interior);
 
 % Constraints on a ship oriented horizontally.
 predicate horizontal(var ROW: r, var COLUMN: c, var MAXRC: size) =
-  solution[r,c] = P(left) /\ solution[r,c+size-1] = P(right) /\ forall(i in c+1..min(c+size-2,num_columns))(solution[r,i] = P(interior));
+  solution[r,c] = left /\ solution[r,c+size-1] = right /\ forall(i in c+1..min(c+size-2,num_columns))(solution[r,i] = interior);
+
+% Cell corresponding to an ASCII character; used to decode input.
+function opt Cell: str_to_cell(string: s) =
+         if s = "o" then singleton elseif s = "<" then left elseif s = ">" then right
+         elseif s = "^" then top elseif s = "v" then bottom elseif s = "#" then interior
+         elseif s = "x" then empty else <> endif;
 
 /*
   Constraints
@@ -88,8 +92,8 @@ predicate horizontal(var ROW: r, var COLUMN: c, var MAXRC: size) =
 
 % Channel 'row_pos'/'col_pos' with 'solution'.
 constraint forall(s in SHIP)(if type_of[s] = 1
-                             then solution[row_pos[s],col_pos[s]] = P(singleton)
-                             elseif orientation[s] = vertical
+                             then solution[row_pos[s],col_pos[s]] = singleton
+                             elseif orientation[s] = 0
                              then vertical(row_pos[s],col_pos[s],type_of[s])
                              else horizontal(row_pos[s],col_pos[s],type_of[s])
                              endif);
@@ -114,19 +118,10 @@ constraint forall(r in ROW)(count(c in COLUMN)(solution[r,c] != empty) = num_in_
 constraint forall(c in COLUMN)(count(r in ROW)(solution[r,c] != empty) = num_in_column[c]);
 
 /*
-  Output (SVG)
+  Output
 */
 
-function string: draw_cell(ROW: r, COLUMN: c) =
-  if fix(solution[r,c]) = P(singleton)
-  then "<circle cx=\"\(c*scale-step)\" cy=\"\(r*scale-step)\" r=\"\(step)\" fill=\"blue\" />\n"
-  elseif fix(solution[r,c]) != empty
-  then "<rect x=\((c-1)*scale) y=\((r-1)*scale) width=\(scale) height=\(scale) fill=\"blue\" />\n"
-  else ""
-  endif;
-  
-int: scale = 10;
-int: step = scale div 2;
-output "<svg width=\"\(num_columns*scale)\" height=\"\(num_rows*scale)\">\n";
-output [draw_cell(r,c) | r in ROW, c in COLUMN];
-output "</svg>";
+function string: output_row(array[int] of var Cell: row) =
+    concat(i in index_set(row))(cell_to_str[fix(row[i])]);
+
+output [output_row(solution[r,COLUMN]) ++ "\n" | r in ROW];
