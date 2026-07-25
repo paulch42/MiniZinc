@@ -20,7 +20,6 @@ if len(sys.argv) < 2 or len(sys.argv) > 3:
 input_root = sys.argv[1]
 input_file = sys.argv[1] + '.txt'
 output_file = (sys.argv[2] if len(sys.argv) > 2 else input_root) + '.pdf'
-lines = []
 grid = []
 with open(input_file, 'r') as file:
     lines = file.readlines()
