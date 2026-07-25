@@ -4,17 +4,17 @@
     ],
     "openTab": 0,
     "projectFiles": [
-        "train-tracks-10-10.dzn",
-        "train-tracks-11-12.dzn",
-        "train-tracks-11-12b.dzn",
-        "train-tracks-16-16.dzn",
-        "train-tracks-6-6.dzn",
-        "train-tracks-8-8.dzn",
-        "train-tracks-8-8b.dzn",
-        "train-tracks-8-9.dzn",
+        "data/train-tracks-10-10.dzn",
+        "data/train-tracks-11-12.dzn",
+        "data/train-tracks-11-12b.dzn",
+        "data/train-tracks-16-16.dzn",
+        "data/train-tracks-6-6.dzn",
+        "data/train-tracks-8-8.dzn",
+        "data/train-tracks-8-8b.dzn",
+        "data/train-tracks-8-9.dzn",
         "train-tracks.mzn"
     ],
     "selectedBuiltinConfigId": "org.chuffed.chuffed",
-    "selectedBuiltinConfigVersion": "0.13.2",
+    "selectedBuiltinConfigVersion": "0.14.0",
     "version": 106
 }
